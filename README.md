@@ -1,12 +1,16 @@
-# cenv
+<div align="center">
 
-Keeping your sanity in check by validating your `.env` files!
+<img src=".github/logo.png" width="30%">
+
+**Keeping your sanity in check by validating your `.env` files!**
+
+</div>
 
 <br>
 
 ## How it works
 
-`cenv` uses comments in `.env` files to generate a schema used for checking the env files integrity. When working on a larger project, env files can change a lot and sometimes break your app if you have forgotten to add certain values to your config. With `cenv` you mimize this risk by having a source of truth that makes sure you have your env set up correctly.
+`cenv` uses comments in `.env` files to generate a schema used for checking the env files integrity. When working on a larger project, env files can change a lot and sometimes break your app if you have forgotten to add/edit/update certain fields. With `cenv` you mimize this risk by having a source of truth that makes sure your env is set up correctly.
 
 ## Use
 
@@ -21,8 +25,14 @@ API_KEY=foo-bar-baz
 
 Create a schema file from your env:
 
-`cenv update`
+```sh
+# Creates a cenv.schema.json file
+env update
+```
 
 Check you .env after fetching the latest changes
 
-`cenv check`
+```sh
+# Compares your env with the existing cenv.schema.json
+env check
+```
