@@ -1,0 +1,14 @@
+[
+	{
+		"key": "NO_VALUE",
+		"required": false
+	},
+	{
+		"key": "REQUIRED_FIELD",
+		"required": true
+	},
+	{
+		"key": "NOT_REQUIRED",
+		"required": false
+	}
+]
