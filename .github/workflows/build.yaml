@@ -1,16 +1,8 @@
 name: ⚙️ Build
 
 on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
-
-permissions:
-  contents: write
-  packages: write
+  release:
+    types: [created]
 
 jobs:
   build:
@@ -34,5 +26,5 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           goos: ${{ matrix.goos }}
           goarch: ${{ matrix.goarch }}
-          binary_name: cenv-${{ matrix.goos }}-${{ matrix.goarch }}
-          project_path: "."
+          binary_name: cenv
+          project_path: .
