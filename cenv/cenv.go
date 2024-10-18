@@ -4,6 +4,7 @@ type CenvFile []CenvField
 
 type CenvField struct {
 	Required bool   `json:"required"`
+	Length   uint32 `json:"length"`
 	Key      string `json:"key"`
 	value    string
 }

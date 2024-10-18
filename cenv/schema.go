@@ -61,5 +61,9 @@ func validateField(sf CenvField, ef CenvField, envPath string) error {
 		return fmt.Errorf("field '%s' is marked as required %s, but is not", ef.Key, envPath)
 	}
 
+	if sf.Length != 0 && sf.Length != ef.Length {
+		return fmt.Errorf("value of '%s' in %s must be %d bytes", ef.Key, envPath, sf.Length)
+	}
+
 	return nil
 }

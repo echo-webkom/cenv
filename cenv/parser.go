@@ -3,6 +3,7 @@ package cenv
 import (
 	"fmt"
 	"os"
+	"strconv"
 	"strings"
 )
 
@@ -17,10 +18,30 @@ type field struct {
 	err   error
 }
 
-func applyTag(fld *CenvField, tag string) error {
-	if tag == "required" {
+func applyTag(fld *CenvField, line string) error {
+	if line == "" {
+		return nil
+	}
+
+	split := strings.Split(line, " ")
+	tag := split[0]
+	val := ""
+	if len(split) > 1 {
+		val = split[1]
+	}
+
+	switch tag {
+	case "required":
 		fld.Required = true
-	} else {
+
+	case "length":
+		length, err := strconv.ParseUint(val, 10, 32)
+		if err != nil {
+			return err
+		}
+		fld.Length = uint32(length)
+
+	default:
 		return fmt.Errorf("unknown tag '%s'", tag)
 	}
 
@@ -80,6 +101,7 @@ func ReadEnv(filepath string) (env CenvFile, err error) {
 
 		fld.Key = f.key
 		fld.value = f.value
+		fld.Length = uint32(len(f.value))
 		env = append(env, fld)
 
 		fld = CenvField{}
