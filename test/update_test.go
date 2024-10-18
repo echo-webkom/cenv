@@ -1,8 +1,9 @@
 package test
 
 import (
-	"cenv/cenv"
 	"testing"
+
+	"github.com/echo-webkom/cenv/cenv"
 )
 
 func TestUpdate(t *testing.T) {

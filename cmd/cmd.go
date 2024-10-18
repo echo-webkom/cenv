@@ -1,9 +1,10 @@
 package cmd
 
 import (
-	"cenv/cenv"
 	"fmt"
 	"os"
+
+	"github.com/echo-webkom/cenv/cenv"
 )
 
 func showHelp() {

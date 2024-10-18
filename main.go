@@ -1,6 +1,6 @@
 package main
 
-import "cenv/cmd"
+import "github.com/echo-webkom/cenv/cmd"
 
 func main() {
 	cmd.Run()

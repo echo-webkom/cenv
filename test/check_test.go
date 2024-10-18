@@ -1,9 +1,10 @@
 package test
 
 import (
-	"cenv/cenv"
 	"fmt"
 	"testing"
+
+	"github.com/echo-webkom/cenv/cenv"
 )
 
 func TestCheck(t *testing.T) {
