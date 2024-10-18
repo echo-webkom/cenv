@@ -24,6 +24,11 @@ API_KEY=foo-bar-baz
 
 # @length 8
 OTHER_KEY=abcdefgh
+
+# Stacking multiple tags
+# @required
+# @length 4
+PIN_CODE=1234
 ```
 
 Create a schema file from your env:
