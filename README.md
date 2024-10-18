@@ -21,6 +21,9 @@ NOT_SO_IMPORTANT=123
 
 # @required
 API_KEY=foo-bar-baz
+
+# @length 8
+OTHER_KEY=abcdefgh
 ```
 
 Create a schema file from your env:
