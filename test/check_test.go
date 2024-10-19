@@ -8,7 +8,7 @@ import (
 )
 
 func TestCheck(t *testing.T) {
-	numTestCases := 3
+	numTestCases := 5
 
 	for i := 0; i < numTestCases; i++ {
 		env, err := cenv.ReadEnv(fmt.Sprintf("cases/check_cases/%d.env", i))

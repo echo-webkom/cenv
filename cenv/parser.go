@@ -40,6 +40,7 @@ func applyTag(fld *CenvField, line string) error {
 			return err
 		}
 		fld.Length = uint32(length)
+		fld.LengthRequired = true
 
 	default:
 		return fmt.Errorf("unknown tag '%s'", tag)
@@ -101,7 +102,6 @@ func ReadEnv(filepath string) (env CenvFile, err error) {
 
 		fld.Key = f.key
 		fld.value = f.value
-		fld.Length = uint32(len(f.value))
 		env = append(env, fld)
 
 		fld = CenvField{}

@@ -49,10 +49,12 @@ func Run() {
 			errorExit("expected value after flag " + arg)
 		}
 
+		val := os.Args[i+1]
+
 		if arg == "--env" {
-			envPath = arg
+			envPath = val
 		} else if arg == "--schema" {
-			schemaPath = arg
+			schemaPath = val
 		} else {
 			errorExit("unknown flag " + arg)
 		}

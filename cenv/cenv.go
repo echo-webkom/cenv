@@ -3,10 +3,11 @@ package cenv
 type CenvFile []CenvField
 
 type CenvField struct {
-	Required bool   `json:"required"`
-	Length   uint32 `json:"length"`
-	Key      string `json:"key"`
-	value    string
+	Required       bool   `json:"required"`
+	LengthRequired bool   `json:"lengthRequired"`
+	Length         uint32 `json:"length"`
+	Key            string `json:"key"`
+	value          string
 }
 
 // Update generates a cenv.schema.json file based on the given .env file
