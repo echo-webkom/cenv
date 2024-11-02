@@ -1,8 +1,0 @@
-[
-    {
-        "key": "foo",
-        "required": false,
-        "length": 2,
-        "lengthRequired": true
-    }
-]

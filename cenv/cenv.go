@@ -7,7 +7,8 @@ type CenvField struct {
 	LengthRequired bool   `json:"lengthRequired"`
 	Length         uint32 `json:"length"`
 	Key            string `json:"key"`
-	value          string
+
+	value string
 }
 
 // Update generates a cenv.schema.json file based on the given .env file
