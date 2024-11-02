@@ -56,15 +56,15 @@ func validateField(sf CenvField, ef CenvField) error {
 	}
 
 	if !sf.Required && ef.Required {
-		return fmt.Errorf("field '%s' is marked as required in .env, but is not in schema", ef.Key)
+		return fmt.Errorf("field '%s' is tagged as required in .env, but not in schema", ef.Key)
 	}
 
 	if sf.LengthRequired && !ef.LengthRequired {
-		return fmt.Errorf("field '%s' is tagged with length %d in schema, but is not in .env", sf.Key, sf.Length)
+		return fmt.Errorf("field '%s' has a required length %d in schema, but not in .env", sf.Key, sf.Length)
 	}
 
 	if !sf.LengthRequired && ef.LengthRequired {
-		return fmt.Errorf("field '%s' is marked with length %d in .env, but not in schema", sf.Key, sf.Length)
+		return fmt.Errorf("field '%s' has a required length %d in .env, but not in schema", sf.Key, sf.Length)
 	}
 
 	if sf.Length != ef.Length {
