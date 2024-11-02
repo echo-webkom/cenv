@@ -11,15 +11,18 @@ import (
 
 const prefix string = "@"
 
-func ReadEnv(filepath string) (env CenvFile, err error) {
+// ReadEnv parses the env file and tags. It also checks that
+// tags are defined correctly and will return an error otherwise.
+func ReadEnv(filepath string) (env []CenvField, err error) {
 	file, err := os.ReadFile(filepath)
 	if err != nil {
 		return env, err
 	}
 
 	formats := []string{
-		fmt.Sprintf("#{ws}%s{word}", prefix),
+		// Dont change order
 		fmt.Sprintf("#{ws}%s{word} {number}", prefix),
+		fmt.Sprintf("#{ws}%s{word}", prefix),
 	}
 
 	tokr := gokenizer.New()
@@ -41,6 +44,9 @@ func ReadEnv(filepath string) (env CenvFile, err error) {
 			switch name {
 			case "required":
 				fld.Required = true
+				if num != "" {
+					return fmt.Errorf("expected newline after tag name, got '%s'", num)
+				}
 
 			case "length":
 				fld.LengthRequired = true
@@ -75,5 +81,18 @@ func ReadEnv(filepath string) (env CenvFile, err error) {
 		}
 	}
 
-	return env, nil
+	return env, validateEnv(env)
+}
+
+func validateEnv(fs []CenvField) error {
+	for _, f := range fs {
+		if f.Required && len(f.value) == 0 {
+			return fmt.Errorf("required field '%s' must have a value", f.Key)
+		}
+		if f.LengthRequired && int(f.Length) != len(f.value) {
+			return fmt.Errorf("tag expects length of '%s' to be %d, is %d", f.Key, f.Length, len(f.value))
+		}
+	}
+
+	return nil
 }

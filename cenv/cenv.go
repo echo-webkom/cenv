@@ -1,6 +1,11 @@
 package cenv
 
-type CenvFile []CenvField
+import "time"
+
+type CenvFile struct {
+	LastUpdated time.Time   `json:"lastUpdated"`
+	Fields      []CenvField `json:"fields"`
+}
 
 type CenvField struct {
 	Required       bool   `json:"required"`
@@ -12,18 +17,23 @@ type CenvField struct {
 }
 
 // Update generates a cenv.schema.json file based on the given .env file
-func Update(envPath string, schemaPath string) error {
-	env, err := ReadEnv(envPath)
+func Update(envPath, schemaPath string) error {
+	fields, err := ReadEnv(envPath)
 	if err != nil {
 		return err
+	}
+
+	env := CenvFile{
+		LastUpdated: time.Now(),
+		Fields:      fields,
 	}
 
 	return writeShema(env, schemaPath)
 }
 
 // Check validates the .env file based on the schema
-func Check(envPath string, schemaPath string) error {
-	env, err := ReadEnv(envPath)
+func Check(envPath, schemaPath string) error {
+	fields, err := ReadEnv(envPath)
 	if err != nil {
 		return err
 	}
@@ -33,5 +43,5 @@ func Check(envPath string, schemaPath string) error {
 		return err
 	}
 
-	return ValidateSchema(env, schema, envPath)
+	return ValidateSchema(fields, schema)
 }
