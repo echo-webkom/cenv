@@ -14,7 +14,10 @@
 
 ## Use
 
-Add `@required` above fields that have to exist and have a non-empty value:
+Add one or more of the following `@tags` above a field:
+
+- `required`: Marks the field as required. The field has to be present, and have a non-empty value.
+- `length [number]`: Requires a specified length for the fields value.
 
 ```py
 NOT_SO_IMPORTANT=123

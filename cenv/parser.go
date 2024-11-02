@@ -5,107 +5,94 @@ import (
 	"os"
 	"strconv"
 	"strings"
+
+	"github.com/jesperkha/gokenizer"
 )
 
 const prefix string = "@"
 
-type field struct {
-	isEmpty bool
-	isTag   bool // Sets value to the tag name
-
-	key   string
-	value string
-	err   error
-}
-
-func applyTag(fld *CenvField, line string) error {
-	if line == "" {
-		return nil
-	}
-
-	split := strings.Split(line, " ")
-	tag := split[0]
-	val := ""
-	if len(split) > 1 {
-		val = split[1]
-	}
-
-	switch tag {
-	case "required":
-		fld.Required = true
-
-	case "length":
-		length, err := strconv.ParseUint(val, 10, 32)
-		if err != nil {
-			return err
-		}
-		fld.Length = uint32(length)
-		fld.LengthRequired = true
-
-	default:
-		return fmt.Errorf("unknown tag '%s'", tag)
-	}
-
-	return nil
-}
-
-func parseLine(line string) (f field, err error) {
-	trimmed := strings.Trim(line, " ")
-	if len(trimmed) == 0 {
-		return field{isEmpty: true}, err
-	}
-
-	if trimmed[0] == '#' {
-		t := strings.Trim(trimmed[1:], " ")
-
-		if len(t) > 1 && string(t[0]) == prefix {
-			return field{isTag: true, value: t[1:]}, err
-		}
-
-		return field{isEmpty: true}, err
-	}
-
-	split := strings.Split(trimmed, "=")
-	if len(split) != 2 || split[0] == "" {
-		return f, fmt.Errorf("syntax error: %s", line)
-	}
-
-	key := strings.Trim(split[0], " ")
-	value := strings.ReplaceAll(strings.Trim(split[1], " "), "\"", "")
-	return field{key: key, value: value, err: nil}, err
-}
-
-func ReadEnv(filepath string) (env CenvFile, err error) {
+// ReadEnv parses the env file and tags. It also checks that
+// tags are defined correctly and will return an error otherwise.
+func ReadEnv(filepath string) (env []CenvField, err error) {
 	file, err := os.ReadFile(filepath)
 	if err != nil {
 		return env, err
 	}
 
-	fld := CenvField{}
-	for idx, line := range strings.Split(string(file), "\n") {
-		f, err := parseLine(line)
-		if err != nil {
-			return env, fmt.Errorf("%s, line %d", err.Error(), idx+1)
-		}
-
-		if f.isEmpty {
-			fld = CenvField{}
-			continue
-		}
-
-		if f.isTag {
-			if err = applyTag(&fld, f.value); err != nil {
-				return env, fmt.Errorf("%s, line %d", err.Error(), idx+1)
-			}
-			continue
-		}
-
-		fld.Key = f.key
-		fld.value = f.value
-		env = append(env, fld)
-
-		fld = CenvField{}
+	formats := []string{
+		// Dont change order
+		fmt.Sprintf("#{ws}%s{word} {number}", prefix),
+		fmt.Sprintf("#{ws}%s{word}", prefix),
 	}
 
-	return env, nil
+	tokr := gokenizer.New()
+	tokr.Class("key", "{var}")
+	tokr.Class("value", "{string}", "{text}")
+	tokr.Class("keyValue", "{ws}{key}{ws}={ws}{value}", "{ws}{key}{ws}={ws}")
+	tokr.Class("comment", "#{any}")
+	tokr.Class("tag", formats...)
+	tokr.Class("expression", "{tag}", "{comment}", "{keyValue}")
+
+	fld := CenvField{}
+
+	tokr.Pattern("{expression}", func(t gokenizer.Token) error {
+		tag := t.Get("expression").Get("tag")
+		if tag.Length != 0 {
+			name := tag.Get("word").Lexeme
+			num := tag.Get("number").Lexeme
+
+			switch name {
+			case "required":
+				fld.Required = true
+				if num != "" {
+					return fmt.Errorf("expected newline after tag name, got '%s'", num)
+				}
+
+			case "length":
+				fld.LengthRequired = true
+				if n, err := strconv.ParseUint(num, 10, 32); err == nil {
+					fld.Length = uint32(n)
+				} else {
+					return fmt.Errorf("expected unsigned int, got '%s'", num)
+				}
+
+			default:
+				return fmt.Errorf("unknown tag '%s'", name)
+			}
+		}
+
+		keyval := t.Get("expression").Get("keyValue")
+
+		if keyval.Length != 0 {
+			fld.Key = keyval.Get("key").Lexeme
+			fld.value = keyval.Get("value").Lexeme
+
+			env = append(env, fld)
+			fld = CenvField{}
+		}
+
+		return nil
+	})
+
+	// Run for each line
+	for _, line := range strings.Split(string(file), "\n") {
+		if err = tokr.Run(line); err != nil {
+			return env, err
+		}
+	}
+
+	return env, validateEnv(env)
+}
+
+func validateEnv(fs []CenvField) error {
+	for _, f := range fs {
+		if f.Required && len(f.value) == 0 {
+			return fmt.Errorf("required field '%s' must have a value", f.Key)
+		}
+		if f.LengthRequired && int(f.Length) != len(f.value) {
+			return fmt.Errorf("tag expects length of '%s' to be %d, is %d", f.Key, f.Length, len(f.value))
+		}
+	}
+
+	return nil
 }
