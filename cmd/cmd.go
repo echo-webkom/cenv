@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"os/exec"
 
 	"github.com/echo-webkom/cenv/cenv"
 )
@@ -14,16 +15,13 @@ func showHelp() {
 	fmt.Println("	check     Check if .env matches schema")
 	fmt.Println("	update    Generate schema based on .env")
 	fmt.Println()
+	fmt.Println("	help      Show this help message")
+	fmt.Println("	install   Get latest release of cenv")
+	fmt.Println()
 	fmt.Println("Flags:")
 	fmt.Println("	--env <path>	   Path to env file, default is current dir")
 	fmt.Println("	--schema <path>    Path to schema file, default is current dir")
 	fmt.Println()
-}
-
-func errorHelp(message string) {
-	fmt.Printf("cenv: %s\n\n", message)
-	showHelp()
-	os.Exit(1)
 }
 
 func errorExit(message string) {
@@ -62,8 +60,20 @@ func Run() {
 		i += 2
 	}
 
-	if command == "help" {
+	if command == "help" || command == "-h" || command == "--help" {
 		showHelp()
+		return
+	}
+
+	if command == "install" {
+		cmd := exec.Command("bash", "install.sh")
+
+		fmt.Println("Installing latest release...")
+		if _, err := cmd.Output(); err != nil {
+			errorExit(err.Error())
+		}
+
+		fmt.Println("Done")
 		return
 	}
 
