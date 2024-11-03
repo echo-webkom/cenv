@@ -12,6 +12,16 @@
 
 `cenv` uses comments in `.env` files to generate a schema used for checking the env files integrity. When working on a larger project, env files can change a lot and sometimes break your app if you have forgotten to add/edit/update certain fields. With `cenv` you mimize this risk by having a source of truth that makes sure your env is set up correctly.
 
+## Install
+
+Copy and run the following command. cenv will be put in `/usr/local/bin`.
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/echo-webkom/cenv/refs/heads/main/install.sh | bash
+```
+
+Once installed, you can self-update with `cenv install`.
+
 ## Use
 
 Add one or more of the following `@tags` above a field:
@@ -47,3 +57,4 @@ Check you .env after fetching the latest changes
 # Compares your env with the existing cenv.schema.json
 env check
 ```
+
