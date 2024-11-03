@@ -66,7 +66,7 @@ func Run() {
 	}
 
 	if command == "install" {
-		cmd := exec.Command("bash", "install.sh")
+		cmd := exec.Command("curl", "-fsSL", "https://raw.githubusercontent.com/echo-webkom/cenv/refs/heads/main/install.sh", "|", "bash")
 
 		fmt.Println("Installing latest release...")
 		if _, err := cmd.Output(); err != nil {
