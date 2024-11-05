@@ -50,23 +50,26 @@ func ValidateSchema(env []CenvField, schema CenvFile) error {
 	return nil
 }
 
+func assertBoolEqual(key, name string, schema, env bool) error {
+	if schema && !env {
+		return fmt.Errorf("field '%s' is tagged with %s in schema, but not in env", key, name)
+	}
+	if !schema && env {
+		return fmt.Errorf("field '%s' is tagged with %s in env, but not in schema", key, name)
+	}
+	return nil
+}
+
 func validateField(sf CenvField, ef CenvField) error {
-	if sf.Required && !ef.Required {
-		return fmt.Errorf("field '%s' is tagged as required in schema, but not in env", sf.Key)
+	if err := assertBoolEqual(sf.Key, "required", sf.Required, ef.Required); err != nil {
+		return err
 	}
-
-	if !sf.Required && ef.Required {
-		return fmt.Errorf("field '%s' is tagged as required in .env, but not in schema", ef.Key)
+	if err := assertBoolEqual(sf.Key, "public", sf.Public, ef.Public); err != nil {
+		return err
 	}
-
-	if sf.LengthRequired && !ef.LengthRequired {
-		return fmt.Errorf("field '%s' has a required length %d in schema, but not in .env", sf.Key, sf.Length)
+	if err := assertBoolEqual(sf.Key, "a required length", sf.LengthRequired, ef.LengthRequired); err != nil {
+		return err
 	}
-
-	if !sf.LengthRequired && ef.LengthRequired {
-		return fmt.Errorf("field '%s' has a required length %d in .env, but not in schema", sf.Key, sf.Length)
-	}
-
 	if sf.Length != ef.Length {
 		return fmt.Errorf("field '%s' is tagged with length %d in schema, but is %d in .env", sf.Key, sf.Length, ef.Length)
 	}

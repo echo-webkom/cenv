@@ -41,15 +41,18 @@ func ReadEnv(filepath string) (env []CenvField, err error) {
 			name := tag.Get("word").Lexeme
 			num := tag.Get("number").Lexeme
 
+			usesNum := false // Tag uses number value
+
 			switch name {
 			case "required":
 				fld.Required = true
-				if num != "" {
-					return fmt.Errorf("expected newline after tag name, got '%s'", num)
-				}
+
+			case "public":
+				fld.Public = true
 
 			case "length":
 				fld.LengthRequired = true
+				usesNum = true
 				if n, err := strconv.ParseUint(num, 10, 32); err == nil {
 					fld.Length = uint32(n)
 				} else {
@@ -59,6 +62,10 @@ func ReadEnv(filepath string) (env []CenvField, err error) {
 			default:
 				return fmt.Errorf("unknown tag '%s'", name)
 			}
+
+			if !usesNum && num != "" {
+				return fmt.Errorf("expected newline after tag name, got '%s'", num)
+			}
 		}
 
 		keyval := t.Get("expression").Get("keyValue")
@@ -66,6 +73,10 @@ func ReadEnv(filepath string) (env []CenvField, err error) {
 		if keyval.Length != 0 {
 			fld.Key = keyval.Get("key").Lexeme
 			fld.value = keyval.Get("value").Lexeme
+
+			if fld.Public {
+				fld.Value = fld.value
+			}
 
 			env = append(env, fld)
 			fld = CenvField{}
@@ -88,6 +99,9 @@ func validateEnv(fs []CenvField) error {
 	for _, f := range fs {
 		if f.Required && len(f.value) == 0 {
 			return fmt.Errorf("required field '%s' must have a value", f.Key)
+		}
+		if f.Public && len(f.value) == 0 {
+			return fmt.Errorf("public field '%s' must have a value", f.Key)
 		}
 		if f.LengthRequired && int(f.Length) != len(f.value) {
 			return fmt.Errorf("tag expects length of '%s' to be %d, is %d", f.Key, f.Length, len(f.value))

@@ -8,10 +8,12 @@ type CenvFile struct {
 }
 
 type CenvField struct {
-	Required       bool   `json:"required"`
-	LengthRequired bool   `json:"lengthRequired"`
-	Length         uint32 `json:"length"`
-	Key            string `json:"key"`
+	Required       bool   `json:"required"`       // This field has to be present and have a non-empty value
+	Public         bool   `json:"public"`         // This has a publicly known but required value, stored in the schema
+	LengthRequired bool   `json:"lengthRequired"` // The length of this field is specified in the schema
+	Length         uint32 `json:"length"`         // The required length, if LengthRequired is true
+	Key            string `json:"key"`            // Field name
+	Value          string `json:"value"`          // Public only
 
 	value string
 }
