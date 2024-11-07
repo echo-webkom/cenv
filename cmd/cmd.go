@@ -3,7 +3,6 @@ package cmd
 import (
 	"fmt"
 	"os"
-	"os/exec"
 
 	"github.com/echo-webkom/cenv/cenv"
 )
@@ -66,14 +65,7 @@ func Run() {
 	}
 
 	if command == "install" {
-		cmd := exec.Command("bash", "-c", "curl -fsSL https://raw.githubusercontent.com/echo-webkom/cenv/refs/heads/main/install.sh | bash")
-
-		fmt.Println("Installing latest release...")
-		if _, err := cmd.Output(); err != nil {
-			errorExit(err.Error())
-		}
-
-		fmt.Println("Done")
+		errorExit("not implemented, install manually: https://github.com/echo-webkom/cenv")
 		return
 	}
 
