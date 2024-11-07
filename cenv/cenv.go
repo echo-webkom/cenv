@@ -1,6 +1,12 @@
 package cenv
 
-import "time"
+import (
+	"fmt"
+	"io/fs"
+	"os"
+	"strings"
+	"time"
+)
 
 type CenvFile struct {
 	LastUpdated time.Time            `json:"lastUpdated"`
@@ -49,7 +55,42 @@ func Check(envPath, schemaPath string) error {
 }
 
 // Fix inserts missing fields into your env and writes values if public.
-func Fix(envPath, schemPath string) error {
+func Fix(envPath, schemaPath string) error {
+	schema, err := ReadSchema(schemaPath)
+	if err != nil {
+		return err
+	}
 
-	return nil
+	env, _ := ReadEnv(envPath)
+
+	file := strings.Builder{}
+
+	for _, f := range schema.Fields {
+		s := ""
+
+		if f.Required {
+			s += "# @required\n"
+		}
+		if f.Public {
+			s += "# @public\n"
+		}
+		if f.LengthRequired {
+			s += fmt.Sprintf("# @length %d\n", f.Length)
+		}
+
+		if v, ok := env[f.Key]; ok {
+			s += fmt.Sprintf("%s=%s\n", f.Key, v.value)
+		} else {
+			s += fmt.Sprintf("%s=%s\n", f.Key, f.Value)
+		}
+
+		fmt.Printf("cenv: added '%s'\n", f.Key)
+		file.WriteString(s)
+	}
+
+	if err := os.WriteFile(envPath, []byte(file.String()), fs.FileMode(os.O_WRONLY)); err != nil {
+		return err
+	}
+
+	return Check(envPath, schemaPath)
 }
