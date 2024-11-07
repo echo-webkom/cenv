@@ -26,6 +26,7 @@ Once installed, you can self-update with `cenv install`.
 
 Add one or more of the following `@tags` above a field:
 
+- `public`: Marks the field as public. The value will be included in the schema. This is for required static values.
 - `required`: Marks the field as required. The field has to be present, and have a non-empty value.
 - `length [number]`: Requires a specified length for the fields value.
 
