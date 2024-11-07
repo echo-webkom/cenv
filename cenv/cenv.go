@@ -78,7 +78,7 @@ func Fix(envPath, schemaPath string) error {
 			s += fmt.Sprintf("# @length %d\n", f.Length)
 		}
 
-		if v, ok := env[f.Key]; ok {
+		if v, ok := env[f.Key]; ok && !f.Public {
 			s += fmt.Sprintf("%s=%s\n", f.Key, v.value)
 		} else {
 			s += fmt.Sprintf("%s=%s\n", f.Key, f.Value)
