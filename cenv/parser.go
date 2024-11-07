@@ -44,6 +44,14 @@ func ReadEnv(filepath string) (env map[string]CenvField, err error) {
 			num := tag.Get("number").Lexeme
 
 			usesNum := false // Tag uses number value
+			n := uint64(0)
+
+			if num != "" {
+				n, err = strconv.ParseUint(num, 10, 32)
+				if err != nil {
+					return fmt.Errorf("expected unsigned int, got '%s'", num)
+				}
+			}
 
 			switch name {
 			case "required":
@@ -54,12 +62,8 @@ func ReadEnv(filepath string) (env map[string]CenvField, err error) {
 
 			case "length":
 				fld.LengthRequired = true
+				fld.Length = uint32(n)
 				usesNum = true
-				if n, err := strconv.ParseUint(num, 10, 32); err == nil {
-					fld.Length = uint32(n)
-				} else {
-					return fmt.Errorf("expected unsigned int, got '%s'", num)
-				}
 
 			default:
 				return fmt.Errorf("unknown tag '%s'", name)
