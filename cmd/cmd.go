@@ -26,8 +26,13 @@ func showHelp() {
 	fmt.Println()
 }
 
-func errorExit(message string) {
+func errorExitS(message string) {
 	color.RGB(237, 93, 83).Println(fmt.Sprintf("cenv: %s", message))
+	os.Exit(1)
+}
+
+func errorExit(err error) {
+	color.RGB(237, 93, 83).Println(err.Error())
 	os.Exit(1)
 }
 
@@ -46,7 +51,7 @@ func Run() {
 		arg := os.Args[i]
 
 		if len(os.Args) <= i+1 {
-			errorExit("expected value after flag " + arg)
+			errorExitS("expected value after flag " + arg)
 		}
 
 		val := os.Args[i+1]
@@ -56,7 +61,7 @@ func Run() {
 		} else if arg == "--schema" {
 			schemaPath = val
 		} else {
-			errorExit("unknown flag " + arg)
+			errorExitS("unknown flag " + arg)
 		}
 
 		i += 2
@@ -68,30 +73,30 @@ func Run() {
 	}
 
 	if command == "install" {
-		errorExit("not implemented, install manually: https://github.com/echo-webkom/cenv")
+		errorExitS("not implemented, install manually: https://github.com/echo-webkom/cenv")
 		return
 	}
 
 	if command == "fix" {
 		if err := cenv.Fix(envPath, schemaPath); err != nil {
-			errorExit(err.Error())
+			errorExit(err)
 		}
 		return
 	}
 
 	if command == "check" {
 		if err := cenv.Check(envPath, schemaPath); err != nil {
-			errorExit(err.Error())
+			errorExit(err)
 		}
 		return
 	}
 
 	if command == "update" {
 		if err := cenv.Update(envPath, schemaPath); err != nil {
-			errorExit(err.Error())
+			errorExit(err)
 		}
 		return
 	}
 
-	errorExit(fmt.Sprintf("'%s' is not a command", command))
+	errorExitS(fmt.Sprintf("'%s' is not a command", command))
 }

@@ -87,28 +87,30 @@ func ReadEnv(filepath string) (env map[string]CenvField, err error) {
 		return nil
 	})
 
+	errs := longError{}
+
 	// Run for each line
 	for _, line := range strings.Split(string(file), "\n") {
 		if err = tokr.Run(line); err != nil {
-			return env, err
+			errs.Add(err.Error())
 		}
 	}
 
-	return env, validateEnv(env)
+	return env, validateEnv(env, errs)
 }
 
-func validateEnv(fs map[string]CenvField) error {
+func validateEnv(fs map[string]CenvField, err longError) error {
 	for _, f := range fs {
 		if f.Required && len(f.value) == 0 {
-			return fmt.Errorf("required field '%s' must have a value", f.Key)
+			err.Add(fmt.Sprintf("required field '%s' must have a value", f.Key))
 		}
 		if f.Public && len(f.value) == 0 {
-			return fmt.Errorf("public field '%s' must have a value", f.Key)
+			err.Add(fmt.Sprintf("public field '%s' must have a value", f.Key))
 		}
 		if f.LengthRequired && int(f.Length) != len(f.value) {
-			return fmt.Errorf("tag expects length of '%s' to be %d, is %d", f.Key, f.Length, len(f.value))
+			err.Add(fmt.Sprintf("tag expects length of '%s' to be %d, is %d", f.Key, f.Length, len(f.value)))
 		}
 	}
 
-	return nil
+	return err.Error()
 }
