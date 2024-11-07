@@ -20,7 +20,7 @@ Copy and run the following command. cenv will be put in `/usr/local/bin`.
 curl -fsSL https://raw.githubusercontent.com/echo-webkom/cenv/refs/heads/main/install.sh | bash
 ```
 
-Once installed, you can self-update with `cenv install`.
+Once installed, you can self-update with `cenv-install`.
 
 ## Use
 
@@ -49,13 +49,18 @@ Create a schema file from your env:
 
 ```sh
 # Creates a cenv.schema.json file
-env update
+cenv update
 ```
 
 Check you .env after fetching the latest changes
 
 ```sh
 # Compares your env with the existing cenv.schema.json
-env check
+cenv check
 ```
 
+You can fix and outdated .env with the fix command. Note that this will overwrite the existing .env, but use the values that were there before, like secret API keys etc. This may not work correctly if the .env is formatted incorrectly.
+
+```sh
+cenv fix
+```
