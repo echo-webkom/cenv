@@ -39,6 +39,7 @@ echo "[LOG] Downloaded and unpacked to $TARGET_DIR/"
 
 echo "[LOG] Copying to usr/local/bin"
 sudo cp $TARGET_DIR/cenv /usr/local/bin
+sudo cp $TARGET_DIR/cenv-install /usr/local/bin
 
 echo "[LOG] Cleanup"
 rm cenv.tar.gz

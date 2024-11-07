@@ -26,5 +26,6 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           goos: ${{ matrix.goos }}
           goarch: ${{ matrix.goarch }}
-          binary_name: cenv
-          project_path: .
+          multi_binaries: true
+          binary_name: cenv cenv-install
+          project_path: . ./installer

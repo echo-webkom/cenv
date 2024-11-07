@@ -16,13 +16,14 @@ func showHelp() {
 	fmt.Println("    update    Generate schema based on .env")
 	fmt.Println("    fix       Automatically fix issues with the .env")
 	fmt.Println("              Tries to reuse previous env values")
-	fmt.Println()
 	fmt.Println("    help      Show this help message")
-	fmt.Println("    install   Get latest release of cenv")
 	fmt.Println()
 	fmt.Println("Flags:")
 	fmt.Println("    --env <path>      Path to env file, default is current dir")
 	fmt.Println("    --schema <path>   Path to schema file, default is current dir")
+	fmt.Println()
+	fmt.Println("Install latest version:")
+	fmt.Println("    cenv-install")
 	fmt.Println()
 }
 
@@ -69,11 +70,6 @@ func Run() {
 
 	if command == "help" || command == "-h" || command == "--help" {
 		showHelp()
-		return
-	}
-
-	if command == "install" {
-		errorExitS("not implemented, install manually: https://github.com/echo-webkom/cenv")
 		return
 	}
 
