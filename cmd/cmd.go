@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/echo-webkom/cenv/cenv"
+	"github.com/fatih/color"
 )
 
 func showHelp() {
@@ -26,7 +27,7 @@ func showHelp() {
 }
 
 func errorExit(message string) {
-	fmt.Printf("cenv: %s\n", message)
+	color.RGB(237, 93, 83).Println(fmt.Sprintf("cenv: %s", message))
 	os.Exit(1)
 }
 
