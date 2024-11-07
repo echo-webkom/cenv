@@ -29,14 +29,9 @@ func writeShema(env CenvFile, filepath string) error {
 	return os.WriteFile(filepath, b, os.ModeAppend|os.ModePerm)
 }
 
-func ValidateSchema(env []CenvField, schema CenvFile) error {
-	envMap := make(map[string]CenvField)
-	for _, f := range env {
-		envMap[f.Key] = f
-	}
-
-	for idx, f := range schema.Fields {
-		if ff, ok := envMap[f.Key]; ok && idx <= len(env) {
+func ValidateSchema(env map[string]CenvField, schema CenvFile) error {
+	for _, f := range schema.Fields {
+		if ff, ok := env[f.Key]; ok {
 			if err := validateField(f, ff); err != nil {
 				return err
 			}

@@ -3,8 +3,8 @@ package cenv
 import "time"
 
 type CenvFile struct {
-	LastUpdated time.Time   `json:"lastUpdated"`
-	Fields      []CenvField `json:"fields"`
+	LastUpdated time.Time            `json:"lastUpdated"`
+	Fields      map[string]CenvField `json:"fields"`
 }
 
 type CenvField struct {
@@ -46,4 +46,10 @@ func Check(envPath, schemaPath string) error {
 	}
 
 	return ValidateSchema(fields, schema)
+}
+
+// Fix inserts missing fields into your env and writes values if public.
+func Fix(envPath, schemPath string) error {
+
+	return nil
 }

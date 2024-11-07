@@ -13,7 +13,9 @@ const prefix string = "@"
 
 // ReadEnv parses the env file and tags. It also checks that
 // tags are defined correctly and will return an error otherwise.
-func ReadEnv(filepath string) (env []CenvField, err error) {
+func ReadEnv(filepath string) (env map[string]CenvField, err error) {
+	env = make(map[string]CenvField)
+
 	file, err := os.ReadFile(filepath)
 	if err != nil {
 		return env, err
@@ -78,7 +80,7 @@ func ReadEnv(filepath string) (env []CenvField, err error) {
 				fld.Value = fld.value
 			}
 
-			env = append(env, fld)
+			env[fld.Key] = fld
 			fld = CenvField{}
 		}
 
@@ -95,7 +97,7 @@ func ReadEnv(filepath string) (env []CenvField, err error) {
 	return env, validateEnv(env)
 }
 
-func validateEnv(fs []CenvField) error {
+func validateEnv(fs map[string]CenvField) error {
 	for _, f := range fs {
 		if f.Required && len(f.value) == 0 {
 			return fmt.Errorf("required field '%s' must have a value", f.Key)
