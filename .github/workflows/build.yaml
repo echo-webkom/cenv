@@ -28,4 +28,4 @@ jobs:
           goarch: ${{ matrix.goarch }}
           multi_binaries: true
           binary_name: cenv
-          project_path: . ./installer
+          project_path: . ./cenv-install
