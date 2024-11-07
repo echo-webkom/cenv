@@ -86,6 +86,7 @@ func Fix(envPath, schemaPath string) error {
 
 		fmt.Printf("cenv: added '%s'\n", f.Key)
 		file.WriteString(s)
+		file.WriteByte('\n')
 	}
 
 	if err := os.WriteFile(envPath, []byte(file.String()), fs.FileMode(os.O_WRONLY)); err != nil {
