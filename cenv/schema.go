@@ -68,6 +68,9 @@ func validateField(sf CenvField, ef CenvField) error {
 	if sf.Length != ef.Length {
 		return fmt.Errorf("field '%s' is tagged with length %d in schema, but is %d in .env", sf.Key, sf.Length, ef.Length)
 	}
+	if err := assertBoolEqual(sf.Key, "a required format", sf.Format != "", ef.Format != ""); err != nil {
+		return err
+	}
 
 	return nil
 }

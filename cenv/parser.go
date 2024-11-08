@@ -24,6 +24,7 @@ func ReadEnv(filepath string) (env map[string]CenvField, err error) {
 	formats := []string{
 		// Dont change order
 		fmt.Sprintf("#{ws}%s{word} {number}", prefix),
+		fmt.Sprintf("#{ws}%s{word} {text}", prefix),
 		fmt.Sprintf("#{ws}%s{word}", prefix),
 	}
 
@@ -42,6 +43,7 @@ func ReadEnv(filepath string) (env map[string]CenvField, err error) {
 		if tag.Length != 0 {
 			name := tag.Get("word").Lexeme
 			num := tag.Get("number").Lexeme
+			format := tag.Get("text").Lexeme
 
 			usesNum := false // Tag uses number value
 			n := uint64(0)
@@ -64,6 +66,9 @@ func ReadEnv(filepath string) (env map[string]CenvField, err error) {
 				fld.LengthRequired = true
 				fld.Length = uint32(n)
 				usesNum = true
+
+			case "format":
+				fld.Format = format
 
 			default:
 				return fmt.Errorf("unknown tag '%s'", name)
@@ -110,6 +115,12 @@ func ReadEnv(filepath string) (env map[string]CenvField, err error) {
 
 func validateEnv(fs map[string]CenvField, err longError) error {
 	for _, f := range fs {
+		if f.Format != "" {
+			tokr := gokenizer.New()
+			if ok, e := tokr.Matches(f.value, f.Format); e != nil || !ok {
+				err.Add(fmt.Sprintf("value for '%s' did not match the format '%s'", f.Key, f.Format))
+			}
+		}
 		if f.Required && len(f.value) == 0 {
 			err.Add(fmt.Sprintf("required field '%s' must have a value", f.Key))
 		}

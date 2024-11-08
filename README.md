@@ -29,6 +29,7 @@ Add one or more of the following `@tags` above a field:
 - `public`: Marks the field as public. The value will be included in the schema. This is for required static values.
 - `required`: Marks the field as required. The field has to be present, and have a non-empty value.
 - `length [number]`: Requires a specified length for the fields value.
+- `format [format]`: Requires a specified format for the value. Uses [gokenizer patterns](https://github.com/jesperkha/gokenizer).
 
 ```py
 NOT_SO_IMPORTANT=123
@@ -42,6 +43,7 @@ OTHER_KEY=abcdefgh
 # Stacking multiple tags
 # @required
 # @length 4
+# @format {number}
 PIN_CODE=1234
 ```
 
@@ -64,3 +66,4 @@ You can fix and outdated .env with the fix command. Note that this will overwrit
 ```sh
 cenv fix
 ```
+

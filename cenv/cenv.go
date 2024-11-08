@@ -18,6 +18,7 @@ type CenvField struct {
 	Public         bool   `json:"public"`         // This has a publicly known but required value, stored in the schema
 	LengthRequired bool   `json:"lengthRequired"` // The length of this field is specified in the schema
 	Length         uint32 `json:"length"`         // The required length, if LengthRequired is true
+	Format         string `json:"format"`         // Require a specified format for the value
 	Key            string `json:"key"`            // Field name
 	Value          string `json:"value"`          // Public only
 
@@ -76,6 +77,9 @@ func Fix(envPath, schemaPath string) error {
 		}
 		if f.LengthRequired {
 			s += fmt.Sprintf("# @length %d\n", f.Length)
+		}
+		if f.Format != "" {
+			s += fmt.Sprintf("# @format %s\n", f.Format)
 		}
 
 		if v, ok := env[f.Key]; ok && !f.Public {
