@@ -26,7 +26,7 @@ func writeShema(env CenvFile, filepath string) error {
 		return err
 	}
 
-	return os.WriteFile(filepath, b, os.ModeAppend|os.ModePerm)
+	return os.WriteFile(filepath, b, 0666)
 }
 
 func ValidateSchema(env map[string]CenvField, schema CenvFile) error {
