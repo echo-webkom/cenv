@@ -86,7 +86,7 @@ func ReadEnv(filepath string) (env map[string]CenvField, err error) {
 			fld.value = keyval.Get("value").Lexeme
 
 			// Strip string quotes
-			if fld.value[0] == '"' && fld.value[len(fld.value)-1] == '"' {
+			if fld.value != "" && fld.value[0] == '"' && fld.value[len(fld.value)-1] == '"' {
 				fld.value = fld.value[1 : len(fld.value)-1]
 			}
 
