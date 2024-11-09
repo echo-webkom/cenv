@@ -2,7 +2,8 @@ name: ⚙️ Build
 
 on:
   release:
-    types: [created]
+    types: [published]
+  workflow_dispatch:
 
 jobs:
   build:
@@ -29,3 +30,4 @@ jobs:
           multi_binaries: true
           binary_name: cenv
           project_path: . ./cenv-install
+
