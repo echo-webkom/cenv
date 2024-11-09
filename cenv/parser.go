@@ -118,17 +118,17 @@ func validateEnv(fs map[string]CenvField, err longError) error {
 		if f.Format != "" {
 			tokr := gokenizer.New()
 			if ok, e := tokr.Matches(f.value, f.Format); e != nil || !ok {
-				err.Add(fmt.Sprintf("value for '%s' did not match the format '%s'", f.Key, f.Format))
+				err.Add(fmt.Sprintf("'%s': value did not match the format '%s'", f.Key, f.Format))
 			}
 		}
 		if f.Required && len(f.value) == 0 {
-			err.Add(fmt.Sprintf("required field '%s' must have a value", f.Key))
+			err.Add(fmt.Sprintf("'%s': required field must have a value", f.Key))
 		}
 		if f.Public && len(f.value) == 0 {
-			err.Add(fmt.Sprintf("public field '%s' must have a value", f.Key))
+			err.Add(fmt.Sprintf("'%s': public field must have a value", f.Key))
 		}
 		if f.LengthRequired && int(f.Length) != len(f.value) {
-			err.Add(fmt.Sprintf("tag expects length of '%s' to be %d, is %d", f.Key, f.Length, len(f.value)))
+			err.Add(fmt.Sprintf("'%s': tag expects length to be %d, is %d", f.Key, f.Length, len(f.value)))
 		}
 	}
 

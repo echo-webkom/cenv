@@ -45,10 +45,10 @@ func ValidateSchema(env map[string]CenvField, schema CenvFile) error {
 
 func assertBoolEqual(key, name string, schema, env bool) error {
 	if schema && !env {
-		return fmt.Errorf("field '%s' is tagged with %s in schema, but not in env", key, name)
+		return fmt.Errorf("'%s' is tagged with %s in schema, but not in env", key, name)
 	}
 	if !schema && env {
-		return fmt.Errorf("field '%s' is tagged with %s in env, but not in schema", key, name)
+		return fmt.Errorf("'%s' is tagged with %s in env, but not in schema", key, name)
 	}
 	return nil
 }
@@ -63,8 +63,8 @@ func validateField(sf CenvField, ef CenvField) (errs longError) {
 	if err := assertBoolEqual(sf.Key, "a required length", sf.LengthRequired, ef.LengthRequired); err != nil {
 		errs.Add(err.Error())
 	}
-	if sf.Length != ef.Length {
-		errs.Add(fmt.Sprintf("field '%s' is tagged with length %d in schema, but is %d in env", sf.Key, sf.Length, ef.Length))
+	if sf.LengthRequired && ef.LengthRequired && sf.Length != ef.Length {
+		errs.Add(fmt.Sprintf("'%s' is tagged with length %d in schema, but is %d in env", sf.Key, sf.Length, ef.Length))
 	}
 	if err := assertBoolEqual(sf.Key, "a required format", sf.Format != "", ef.Format != ""); err != nil {
 		errs.Add(err.Error())
