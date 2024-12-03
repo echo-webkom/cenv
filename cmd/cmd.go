@@ -19,11 +19,13 @@ func showHelp() {
 	fmt.Println("    fix       Automatically fix issues with the .env")
 	fmt.Println("              Tries to reuse previous env values")
 	fmt.Println("    help      Show this help message")
+	fmt.Println("    version   Show version")
 	fmt.Println()
 	fmt.Println("Flags:")
 	fmt.Println("    --env <path>      Path to env file, default is current dir")
 	fmt.Println("    --schema <path>   Path to schema file, default is current dir")
 	fmt.Println("    --skip-version    Skip version check")
+	fmt.Println("    --version         Show version")
 	fmt.Println()
 }
 
@@ -72,6 +74,15 @@ func Run() {
 
 	if command == "help" || command == "-h" || command == "--help" {
 		showHelp()
+		return
+	}
+
+	if command == "version" || command == "--version" || command == "-v" {
+		if Version == "dev" {
+			fmt.Println("you are running a development version")
+		} else {
+			fmt.Println(Version)
+		}
 		return
 	}
 
