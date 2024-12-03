@@ -29,5 +29,5 @@ jobs:
           goarch: ${{ matrix.goarch }}
           multi_binaries: true
           binary_name: cenv
+          ldflags: -X main.Version=${{ github.event.release.tag_name }}
           project_path: . ./cenv-install
-

@@ -8,6 +8,8 @@ import (
 	"github.com/fatih/color"
 )
 
+var Version = "dev"
+
 func showHelp() {
 	fmt.Println("cenv [command] <args>")
 	fmt.Println()
@@ -21,9 +23,7 @@ func showHelp() {
 	fmt.Println("Flags:")
 	fmt.Println("    --env <path>      Path to env file, default is current dir")
 	fmt.Println("    --schema <path>   Path to schema file, default is current dir")
-	fmt.Println()
-	fmt.Println("Install latest version:")
-	fmt.Println("    cenv-install")
+	fmt.Println("    --skip-version    Skip version check")
 	fmt.Println()
 }
 
@@ -38,6 +38,8 @@ func errorExit(err error) {
 }
 
 func Run() {
+	checkIfLatestVersion()
+
 	if len(os.Args) < 2 {
 		showHelp()
 		os.Exit(1)

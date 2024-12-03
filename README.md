@@ -67,3 +67,16 @@ You can fix and outdated .env with the fix command. Note that this will overwrit
 cenv fix
 ```
 
+## Building
+
+To build the project, you need to have Go installed. Run the following command to build the project:
+
+```sh
+go build -o cenv cmd/cenv/main.go
+```
+
+If you want to overwrite the `Version` variable in `main.go` you have add the following flags:
+
+```sh
+go build -o cenv -ldflags "-X main.Version=<your-version>" cmd/cenv/main.go
+```

@@ -1,48 +1,63 @@
-# Installs cenv to /usr/local/bin
+#!/usr/bin/env bash
 
 REPO="echo-webkom/cenv"
-TARGET_DIR="temp_cenv"
 
-OS=$(uname | tr '[:upper:]' '[:lower:]')
-ARCH=$(uname -m)
-
-if [ "$ARCH" == "x86_64" ]; then
-    ARCH="amd64"
-elif [ "$ARCH" == "aarch64" ]; then
-    ARCH="arm64"
+if [ "$OS" = "Windows_NT" ]; then
+    target="windows-amd64"
+else
+    case $(uname -sm) in
+        "Darwin x86_64") target="darwin-amd64" ;;
+        "Darwin arm64") target="darwin-arm64" ;;
+        "Linux x86_64") target="linux-amd64" ;;
+        "Linux aarch64") target="linux-arm" ;;
+        *) target="unknown" ;;
+    esac
 fi
 
-echo "[LOG] Getting latest release"
-
-# Get all release binary urls
-URL=$(curl -s "https://api.github.com/repos/$REPO/releases/latest" | \
-    grep -oP '"browser_download_url": "\K(.*'"$OS-$ARCH"'.*\.tar\.gz)')
-
-# Remove duplicate results
-URL=$(echo $URL | cut -d' ' -f1)
-
-if [ -z "$URL" ]; then
-    echo "[ERROR] Could not find a release for OS=$OS and ARCH=$ARCH."
+if [ "$target" = "unknown" ]; then
+    echo "Error: Unsupported OS or architecture."
     exit 1
 fi
 
-echo "[LOG] Downloading cenv..."
-curl -s -L -o cenv.tar.gz "$URL"
+latest_release=$(curl -s "https://api.github.com/repos/$REPO/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
 
-echo "[LOG] Creating target dir"
-mkdir -p "$TARGET_DIR"
+if [ -z "$latest_release" ]; then
+    echo "Error: Unable to fetch the latest release from $REPO."
+    exit 1
+fi
 
-echo "[LOG] Unpacking"
-tar -xzf cenv.tar.gz -C "$TARGET_DIR"
+bin_dir="$HOME/.local/bin"
+mkdir -p "$bin_dir"
 
-echo "[LOG] Downloaded and unpacked to $TARGET_DIR/"
+binary_name="cenv-${latest_release}-${target}.tar.gz"
+download_url="https://github.com/$REPO/releases/download/$latest_release/$binary_name"
+archive_path="$bin_dir/cenv.tar.gz"
+exe="$bin_dir/cenv"
+install_exe="$bin_dir/cenv-install"
 
-echo "[LOG] Copying to usr/local/bin"
-sudo cp $TARGET_DIR/cenv /usr/local/bin
-sudo cp $TARGET_DIR/cenv-install /usr/local/bin
+curl --fail --location --progress-bar --output "$archive_path" "$download_url"
 
-echo "[LOG] Cleanup"
-rm cenv.tar.gz
-rm -r $TARGET_DIR
+if [ $? -ne 0 ]; then
+    echo "Error: Failed to download from $download_url."
+    exit 1
+fi
 
-echo "[LOG] Done"
+if ! command -v tar &> /dev/null; then
+    echo "Error: 'tar' command is required to extract the binary."
+    exit 1
+fi
+
+tar -xzf "$archive_path" -C "$bin_dir"
+
+if [ ! -f "$exe" ]; then
+    echo "Error: Failed to extract the binary from the archive."
+    exit 1
+fi
+
+chmod +x "$exe"
+chmod +x "$install_exe"
+
+rm "$archive_path"
+
+echo "Installation completed successfully!"
+echo "Run 'cenv --help' to get started."
