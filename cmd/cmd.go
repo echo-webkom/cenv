@@ -61,11 +61,12 @@ func Run() {
 
 		val := os.Args[i+1]
 
-		if arg == "--env" {
+		switch arg {
+		case "--env":
 			envPath = val
-		} else if arg == "--schema" {
+		case "--schema":
 			schemaPath = val
-		} else {
+		default:
 			errorExitS("unknown flag " + arg)
 		}
 
