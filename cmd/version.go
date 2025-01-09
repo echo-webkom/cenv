@@ -9,6 +9,8 @@ import (
 	"github.com/fatih/color"
 )
 
+var Version = "dev"
+
 func checkIfLatestVersion() {
 	if Version == "dev" {
 		return

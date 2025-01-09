@@ -8,8 +8,6 @@ import (
 	"github.com/fatih/color"
 )
 
-var Version = "dev"
-
 func showHelp() {
 	fmt.Println("cenv [command] <args>")
 	fmt.Println()
