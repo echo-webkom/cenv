@@ -2,8 +2,11 @@ name: ⚙️ Build
 
 on:
   release:
-    types: [published]
-  workflow_dispatch:
+    types:
+      - released
+
+permissions:
+  contents: write
 
 jobs:
   build:
