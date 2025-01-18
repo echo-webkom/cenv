@@ -14,7 +14,7 @@
 
 ## Install
 
-Copy and run the following command. cenv will be put in `/usr/local/bin`.
+Copy and run the following command. cenv will be put in `$HOME/.local/bin`. Make sure that the directory is in your `$PATH`.
 
 ```sh
 curl -fsSL https://raw.githubusercontent.com/echo-webkom/cenv/refs/heads/main/install.sh | bash
@@ -78,5 +78,5 @@ go build -o cenv cmd/cenv/main.go
 If you want to overwrite the `Version` variable in `main.go` you have add the following flags:
 
 ```sh
-go build -o cenv -ldflags "-X main.Version=<your-version>" cmd/cenv/main.go
+go build -o bin/cenv -ldflags "-X 'github.com/echo-webkom/cenv/cmd.Version=<your-version>'" main.go
 ```

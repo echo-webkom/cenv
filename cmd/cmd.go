@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"os/exec"
 
 	"github.com/echo-webkom/cenv/cenv"
 	"github.com/fatih/color"
@@ -18,6 +19,7 @@ func showHelp() {
 	fmt.Println("              Tries to reuse previous env values")
 	fmt.Println("    help      Show this help message")
 	fmt.Println("    version   Show version")
+	fmt.Println("    upgrade   Upgrade to latest version")
 	fmt.Println()
 	fmt.Println("Flags:")
 	fmt.Println("    --env <path>      Path to env file, default is current dir")
@@ -82,6 +84,19 @@ func Run() {
 		} else {
 			fmt.Println(Version)
 		}
+		return
+	}
+
+	if command == "upgrade" {
+		cmd := exec.Command("bash", "-c", "curl -fsSL https://raw.githubusercontent.com/echo-webkom/cenv/refs/heads/main/install.sh | bash")
+		fmt.Println("Installing latest release...")
+
+		if _, err := cmd.Output(); err != nil {
+			fmt.Println(err)
+			return
+		}
+
+		fmt.Println("Upgrade complete")
 		return
 	}
 
