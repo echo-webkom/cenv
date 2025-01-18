@@ -29,35 +29,39 @@ fi
 bin_dir="$HOME/.local/bin"
 mkdir -p "$bin_dir"
 
-binary_name="cenv-${latest_release}-${target}.tar.gz"
-download_url="https://github.com/$REPO/releases/download/$latest_release/$binary_name"
-archive_path="$bin_dir/cenv.tar.gz"
-exe="$bin_dir/cenv"
-install_exe="$bin_dir/cenv-install"
+bins=("cenv" "cenv-install")
 
-curl --fail --location --progress-bar --output "$archive_path" "$download_url"
+for bin in "${bins[@]}"; do
+    binary_name="${bin}-${latest_release}-${target}.tar.gz"
+    download_url="https://github.com/$REPO/releases/download/$latest_release/$binary_name"
+    archive_path="$bin_dir/${bin}.tar.gz"
+    exe="$bin_dir/$bin"
 
-if [ $? -ne 0 ]; then
-    echo "Error: Failed to download from $download_url."
-    exit 1
-fi
+    echo "Downloading $bin from $download_url..."
 
-if ! command -v tar &> /dev/null; then
-    echo "Error: 'tar' command is required to extract the binary."
-    exit 1
-fi
+    curl --fail --location --progress-bar --output "$archive_path" "$download_url"
 
-tar -xzf "$archive_path" -C "$bin_dir"
+    if [ $? -ne 0 ]; then
+        echo "Error: Failed to download $bin from $download_url."
+        exit 1
+    fi
 
-if [ ! -f "$exe" ]; then
-    echo "Error: Failed to extract the binary from the archive."
-    exit 1
-fi
+    if ! command -v tar &> /dev/null; then
+        echo "Error: 'tar' command is required to extract the binary."
+        exit 1
+    fi
 
-chmod +x "$exe"
-chmod +x "$install_exe"
+    echo "Extracting $bin..."
+    tar -xzf "$archive_path" -C "$bin_dir"
 
-rm "$archive_path"
+    if [ ! -f "$exe" ]; then
+        echo "Error: Failed to extract $bin from the archive."
+        exit 1
+    fi
+
+    chmod +x "$exe"
+    rm "$archive_path"
+done
 
 echo "Installation completed successfully!"
-echo "Run 'cenv --help' to get started."
+echo "Run 'cenv --help' or 'cenv-install --help' to get started."
