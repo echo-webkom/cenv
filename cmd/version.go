@@ -9,10 +9,10 @@ import (
 	"github.com/fatih/color"
 )
 
-var Version = "dev"
+var Version string
 
 func checkIfLatestVersion() {
-	if Version == "dev" {
+	if Version == "" {
 		return
 	}
 
