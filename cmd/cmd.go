@@ -77,7 +77,7 @@ func Run() {
 	}
 
 	if command == "version" || command == "--version" || command == "-v" {
-		if Version == "dev" {
+		if Version == "" {
 			fmt.Println("you are running a development version")
 		} else {
 			fmt.Println(Version)

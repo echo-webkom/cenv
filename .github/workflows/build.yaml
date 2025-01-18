@@ -25,12 +25,21 @@ jobs:
       - name: 🔍 Checkout
         uses: actions/checkout@v4
 
-      - uses: wangyoucao577/go-release-action@v1
+      - name: 🚀 Build cenv
+        uses: wangyoucao577/go-release-action@v1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           goos: ${{ matrix.goos }}
           goarch: ${{ matrix.goarch }}
-          multi_binaries: true
           binary_name: cenv
           ldflags: -X 'github.com/echo-webkom/cenv/cmd.Version=${{ github.event.release.tag_name }}'
-          project_path: . ./cenv-install
+          project_path: .
+
+      - name: 🚀 Build cenv-install
+        uses: wangyoucao577/go-release-action@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          goos: ${{ matrix.goos }}
+          goarch: ${{ matrix.goarch }}
+          binary_name: cenv-install
+          project_path: ./cenv-install
