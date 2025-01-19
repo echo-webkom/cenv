@@ -1,7 +1,6 @@
 package cenv_test
 
 import (
-	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
@@ -55,8 +54,6 @@ func TestUpdate(t *testing.T) {
 			if err != nil {
 				t.Fatalf("failed to read schema file: %v", err)
 			}
-
-			fmt.Println(string(data))
 
 			if !strings.Contains(string(data), `"FOO":{`) {
 				t.Errorf("schema file is missing FOO")
