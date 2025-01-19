@@ -29,7 +29,12 @@ func ReadEnv(filepath string) (env map[string]CenvField, err error) {
 	}
 
 	tokr := gokenizer.New()
-	tokr.Class("key", "{var}")
+
+	tokr.ClassFunc("env_var", func(b byte) bool {
+		return strings.Contains("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_", string(b))
+	})
+
+	tokr.Class("key", "{env_var}")
 	tokr.Class("value", "{string}", "{text}")
 	tokr.Class("keyValue", "{ws}{key}{ws}={ws}{value}", "{ws}{key}{ws}={ws}")
 	tokr.Class("comment", "#{any}")
