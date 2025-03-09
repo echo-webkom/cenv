@@ -4,13 +4,26 @@ REPO="echo-webkom/cenv"
 
 if [ "$OS" = "Windows_NT" ]; then
     target="windows-amd64"
+    extension=".zip"
 else
     case $(uname -sm) in
-        "Darwin x86_64") target="darwin-amd64" ;;
-        "Darwin arm64") target="darwin-arm64" ;;
-        "Linux x86_64") target="linux-amd64" ;;
-        "Linux aarch64") target="linux-arm" ;;
-        *) target="unknown" ;;
+    "Darwin x86_64")
+        target="darwin-amd64"
+        extension=".tar.gz"
+        ;;
+    "Darwin arm64")
+        target="darwin-arm64"
+        extension=".tar.gz"
+        ;;
+    "Linux x86_64")
+        target="linux-amd64"
+        extension=".tar.gz"
+        ;;
+    "Linux aarch64")
+        target="linux-arm64"
+        extension=".tar.gz"
+        ;;
+    *) target="unknown" ;;
     esac
 fi
 
@@ -32,9 +45,9 @@ mkdir -p "$bin_dir"
 bins=("cenv" "cenv-install")
 
 for bin in "${bins[@]}"; do
-    binary_name="${bin}-${latest_release}-${target}.tar.gz"
+    binary_name="${bin}-${latest_release}-${target}${extension}"
     download_url="https://github.com/$REPO/releases/download/$latest_release/$binary_name"
-    archive_path="$bin_dir/${bin}.tar.gz"
+    archive_path="$bin_dir/${bin}${extension}"
     exe="$bin_dir/$bin"
 
     echo "Downloading $bin from $download_url..."
@@ -46,7 +59,7 @@ for bin in "${bins[@]}"; do
         exit 1
     fi
 
-    if ! command -v tar &> /dev/null; then
+    if ! command -v tar &>/dev/null; then
         echo "Error: 'tar' command is required to extract the binary."
         exit 1
     fi
