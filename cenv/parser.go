@@ -111,31 +111,38 @@ func ReadEnv(filepath string) (env map[string]CenvField, err error) {
 	// Run for each line
 	for _, line := range strings.Split(string(file), "\n") {
 		if err = tokr.Run(line); err != nil {
-			errs.Add(err.Error())
+			errs.Add(err)
 		}
 	}
 
 	return env, validateEnv(env, errs)
 }
 
-func validateEnv(fs map[string]CenvField, err longError) error {
+func validateEnv(fs map[string]CenvField, longErr longError) error {
 	for _, f := range fs {
-		if f.Format != "" {
-			tokr := gokenizer.New()
-			if ok, e := tokr.Matches(f.value, f.Format); e != nil || !ok {
-				err.Add(fmt.Sprintf("'%s': value did not match the format '%s'", f.Key, f.Format))
-			}
-		}
-		if f.Required && len(f.value) == 0 {
-			err.Add(fmt.Sprintf("'%s': required field must have a value", f.Key))
-		}
-		if f.Public && len(f.value) == 0 {
-			err.Add(fmt.Sprintf("'%s': public field must have a value", f.Key))
-		}
-		if f.LengthRequired && int(f.Length) != len(f.value) {
-			err.Add(fmt.Sprintf("'%s': tag expects length to be %d, is %d", f.Key, f.Length, len(f.value)))
+		if err := validateEnvField(f); err != nil {
+			longErr.Add(err)
 		}
 	}
 
-	return err.Error()
+	return longErr.Error()
+}
+
+func validateEnvField(field CenvField) error {
+	if field.Format != "" {
+		tokr := gokenizer.New()
+		if ok, e := tokr.Matches(field.value, field.Format); e != nil || !ok {
+			return fmt.Errorf("'%s': value did not match the format '%s'", field.Key, field.Format)
+		}
+	}
+	if field.Required && len(field.value) == 0 {
+		return fmt.Errorf("'%s': required field must have a value", field.Key)
+	}
+	if field.Public && len(field.value) == 0 {
+		return fmt.Errorf("'%s': public field must have a value", field.Key)
+	}
+	if field.LengthRequired && int(field.Length) != len(field.value) {
+		return fmt.Errorf("'%s': tag expects length to be %d, is %d", field.Key, field.Length, len(field.value))
+	}
+	return nil
 }
