@@ -14,13 +14,23 @@
 
 ## Install
 
+### CLI app
+
 Copy and run the following command. cenv will be put in `$HOME/.local/bin`. Make sure that the directory is in your `$PATH`.
 
 ```sh
 curl -fsSL https://raw.githubusercontent.com/echo-webkom/cenv/refs/heads/main/install.sh | bash
 ```
 
-Once installed, you can self-update with `cenv-install`.
+Once installed, you can self-update with `cenv upgrade` or the `cenv-install` binary (separate download).
+
+### Go package
+
+You can also use cenv as a single-util package. See [the package source](cenv.go).
+
+```sh
+go get github.com/echo-webkom/cenv
+```
 
 ## Use
 
