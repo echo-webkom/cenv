@@ -21,7 +21,7 @@ func ReadSchema(filepath string) (schema CenvFile, err error) {
 }
 
 func writeShema(env CenvFile, filepath string) error {
-	b, err := json.Marshal(env)
+	b, err := json.MarshalIndent(env, "", "\t")
 	if err != nil {
 		return err
 	}
