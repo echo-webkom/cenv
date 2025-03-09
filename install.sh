@@ -32,6 +32,12 @@ if [ "$target" = "unknown" ]; then
     exit 1
 fi
 
+if [ "$extension" == ".zip" ]; then
+    tool="unzip"
+else
+    tool="tar"
+fi
+
 latest_release=$(curl -s "https://api.github.com/repos/$REPO/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
 
 if [ -z "$latest_release" ]; then
@@ -59,13 +65,23 @@ for bin in "${bins[@]}"; do
         exit 1
     fi
 
-    if ! command -v tar &>/dev/null; then
-        echo "Error: 'tar' command is required to extract the binary."
-        exit 1
-    fi
+    if [ "$tool" == "unzip" ]; then
+        if ! command -v unzip &>/dev/null; then
+            echo "Error: 'unzip' command is required to extract the binary."
+            exit 1
+        fi
 
-    echo "Extracting $bin..."
-    tar -xzf "$archive_path" -C "$bin_dir"
+        echo "Unzipping $bin..."
+        unzip -o "$archive_path" -d "$bin_dir"
+    else
+        if ! command -v tar &>/dev/null; then
+            echo "Error: 'tar' command is required to extract the binary."
+            exit 1
+        fi
+
+        echo "Extracting $bin..."
+        tar -xzf "$archive_path" -C "$bin_dir"
+    fi
 
     if [ ! -f "$exe" ]; then
         echo "Error: Failed to extract $bin from the archive."
