@@ -55,7 +55,7 @@ func TestUpdate(t *testing.T) {
 				t.Fatalf("failed to read schema file: %v", err)
 			}
 
-			if !strings.Contains(string(data), `"FOO":{`) {
+			if !strings.Contains(string(data), `"FOO": {`) {
 				t.Errorf("schema file is missing FOO")
 			}
 
