@@ -79,14 +79,14 @@ cenv fix
 
 ## Building
 
-To build the project, you need to have Go installed. Run the following command to build the project:
+To build the project, you need to have Go installed. Run the following command to build the project (make sure the `bin` directory exists):
 
 ```sh
-go build -o cenv cmd/cenv/main.go
+go build -o bin/cenv app/main.go
 ```
 
 If you want to overwrite the `Version` variable in `main.go` you have add the following flags:
 
 ```sh
-go build -o bin/cenv -ldflags "-X 'github.com/echo-webkom/cenv/cmd.Version=<your-version>'" main.go
+go build -o bin/cenv -ldflags "-X 'github.com/echo-webkom/cenv/cmd.Version=<your-version>'" app/main.go
 ```
