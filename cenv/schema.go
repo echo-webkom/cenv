@@ -69,6 +69,9 @@ func compareFields(sf CenvField, ef CenvField) (errs longError) {
 	if err := assertBoolEqual(sf.Key, "a required format", sf.Format != "", ef.Format != ""); err != nil {
 		errs.Add(err)
 	}
+	if sf.Public && ef.Public && sf.Value != ef.value {
+		errs.Add(fmt.Errorf("public field '%s' must have the value '%s'", sf.Key, sf.Value))
+	}
 
 	return errs
 }
