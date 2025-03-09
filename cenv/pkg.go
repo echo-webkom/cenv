@@ -6,7 +6,7 @@ import (
 	"github.com/joho/godotenv"
 )
 
-func CheckAndLoad(envPath, schemaPath string) error {
+func LoadAndCheck(envPath, schemaPath string) error {
 	env, err := ReadSchema(schemaPath)
 	if err != nil {
 		return err
