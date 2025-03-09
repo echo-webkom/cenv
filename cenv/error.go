@@ -10,8 +10,8 @@ type longError struct {
 	err bool
 }
 
-func (err *longError) Add(s string) {
-	err.s += fmt.Sprintf("cenv: %s\n", s)
+func (err *longError) Add(e error) {
+	err.s += fmt.Sprintf("cenv: %s\n", e.Error())
 	err.err = true
 }
 

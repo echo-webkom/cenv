@@ -34,9 +34,9 @@ func ValidateSchema(env map[string]CenvField, schema CenvFile) error {
 
 	for _, f := range schema.Fields {
 		if ff, ok := env[f.Key]; ok {
-			errs.AddMany(validateField(f, ff))
+			errs.AddMany(compareFields(f, ff))
 		} else {
-			errs.Add(fmt.Sprintf("missing field '%s'", f.Key))
+			errs.Add(fmt.Errorf("missing field '%s'", f.Key))
 		}
 	}
 
@@ -53,21 +53,21 @@ func assertBoolEqual(key, name string, schema, env bool) error {
 	return nil
 }
 
-func validateField(sf CenvField, ef CenvField) (errs longError) {
+func compareFields(sf CenvField, ef CenvField) (errs longError) {
 	if err := assertBoolEqual(sf.Key, "required", sf.Required, ef.Required); err != nil {
-		errs.Add(err.Error())
+		errs.Add(err)
 	}
 	if err := assertBoolEqual(sf.Key, "public", sf.Public, ef.Public); err != nil {
-		errs.Add(err.Error())
+		errs.Add(err)
 	}
 	if err := assertBoolEqual(sf.Key, "a required length", sf.LengthRequired, ef.LengthRequired); err != nil {
-		errs.Add(err.Error())
+		errs.Add(err)
 	}
 	if sf.LengthRequired && ef.LengthRequired && sf.Length != ef.Length {
-		errs.Add(fmt.Sprintf("'%s' is tagged with length %d in schema, but is %d in env", sf.Key, sf.Length, ef.Length))
+		errs.Add(fmt.Errorf("'%s' is tagged with length %d in schema, but is %d in env", sf.Key, sf.Length, ef.Length))
 	}
 	if err := assertBoolEqual(sf.Key, "a required format", sf.Format != "", ef.Format != ""); err != nil {
-		errs.Add(err.Error())
+		errs.Add(err)
 	}
 
 	return errs
