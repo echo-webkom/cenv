@@ -4,6 +4,8 @@
 
 **Keeping your sanity in check by validating your `.env` files!**
 
+**<a href="https://github.com/echo-webkom/cenv/releases/latest">Latest release ➜</a>**
+
 </div>
 
 <br>
@@ -22,7 +24,7 @@ Copy and run the following command. cenv will be put in `$HOME/.local/bin`. Make
 curl -fsSL https://raw.githubusercontent.com/echo-webkom/cenv/refs/heads/main/install.sh | bash
 ```
 
-Once installed, you can self-update with `cenv upgrade` or the `cenv-install` binary (separate download).
+Once installed, you can self-update with `cenv upgrade`.
 
 ### Go package
 
