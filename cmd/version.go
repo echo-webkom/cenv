@@ -6,6 +6,8 @@ import (
 	"os"
 	"strings"
 
+	"slices"
+
 	"github.com/fatih/color"
 )
 
@@ -16,10 +18,8 @@ func checkIfLatestVersion() {
 		return
 	}
 
-	for _, arg := range os.Args {
-		if arg == "--skip-version" {
-			return
-		}
+	if slices.Contains(os.Args, "--skip-version") {
+		return
 	}
 
 	resp, err := http.Get("https://api.github.com/repos/echo-webkom/cenv/releases/latest")

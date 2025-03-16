@@ -34,12 +34,3 @@ jobs:
           binary_name: cenv
           ldflags: -X 'github.com/echo-webkom/cenv/cmd.Version=${{ github.event.release.tag_name }}'
           project_path: ./app
-
-      - name: 🚀 Build cenv-install
-        uses: wangyoucao577/go-release-action@v1
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          goos: ${{ matrix.goos }}
-          goarch: ${{ matrix.goarch }}
-          binary_name: cenv-install
-          project_path: ./cenv-install
