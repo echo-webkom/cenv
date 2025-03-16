@@ -2,7 +2,6 @@ package cenv
 
 import (
 	"fmt"
-	"io/fs"
 	"os"
 	"strings"
 	"time"
@@ -93,7 +92,7 @@ func Fix(envPath, schemaPath string) error {
 		file.WriteByte('\n')
 	}
 
-	if err := os.WriteFile(envPath, []byte(file.String()), fs.FileMode(os.O_WRONLY)); err != nil {
+	if err := os.WriteFile(envPath, []byte(file.String()), 0666); err != nil {
 		return err
 	}
 
