@@ -48,7 +48,7 @@ fi
 bin_dir="$HOME/.local/bin"
 mkdir -p "$bin_dir"
 
-bins=("cenv" "cenv-install")
+bins=("cenv")
 
 for bin in "${bins[@]}"; do
     binary_name="${bin}-${latest_release}-${target}${extension}"
@@ -93,4 +93,4 @@ for bin in "${bins[@]}"; do
 done
 
 echo "Installation completed successfully!"
-echo "Run 'cenv --help' or 'cenv-install --help' to get started."
+echo "Run 'cenv --help' to get started"
