@@ -44,6 +44,6 @@ func checkIfLatestVersion() {
 	isLatest := Version == latestVersion
 
 	if !isLatest {
-		color.Yellow("A new version of cenv is available. Run 'cenv-install' or 'cenv upgrade' to upgrade to the latest version.")
+		color.Yellow("A new version of cenv is available. Run 'cenv upgrade' to upgrade to the latest version.")
 	}
 }
