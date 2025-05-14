@@ -61,9 +61,11 @@ func compareFields(sf CenvField, ef CenvField) (errs longError) {
 	}
 	if err := assertBoolEqual(sf.Key, "a default value", sf.Default != "", ef.Default != ""); err != nil {
 		errs.Add(err)
+	} else if sf.Default != ef.Default {
+		errs.Add(fmt.Errorf("'%s' has default '%s' in schema, but '%s' in .env", sf.Key, sf.Default, ef.Default))
 	}
 	if schemaEnum, envEnum := strings.Join(sf.Enum, " | "), strings.Join(ef.Enum, " | "); schemaEnum != envEnum {
-		errs.Add(fmt.Errorf("'%s's enum tag does not match with schema", sf.Key))
+		errs.Add(fmt.Errorf("'%s's enum tag does not match schema", sf.Key))
 	}
 	if err := assertBoolEqual(sf.Key, "public", sf.Public, ef.Public); err != nil {
 		errs.Add(err)
