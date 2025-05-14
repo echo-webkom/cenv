@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"strings"
 )
 
 func ReadSchema(filepath string) (schema CenvFile, err error) {
@@ -53,9 +54,16 @@ func assertBoolEqual(key, name string, schema, env bool) error {
 	return nil
 }
 
+// Check if tags and fields in env match the ones in schema.
 func compareFields(sf CenvField, ef CenvField) (errs longError) {
 	if err := assertBoolEqual(sf.Key, "required", sf.Required, ef.Required); err != nil {
 		errs.Add(err)
+	}
+	if err := assertBoolEqual(sf.Key, "a default value", sf.Default != "", ef.Default != ""); err != nil {
+		errs.Add(err)
+	}
+	if schemaEnum, envEnum := strings.Join(sf.Enum, " | "), strings.Join(ef.Enum, " | "); schemaEnum != envEnum {
+		errs.Add(fmt.Errorf("'%s's enum tag does not match with schema", sf.Key))
 	}
 	if err := assertBoolEqual(sf.Key, "public", sf.Public, ef.Public); err != nil {
 		errs.Add(err)
