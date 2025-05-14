@@ -81,6 +81,9 @@ func Fix(envPath, schemaPath string) error {
 		if f.Format != "" {
 			s += fmt.Sprintf("# @format %s\n", f.Format)
 		}
+		if len(f.Enum) != 0 {
+			s += fmt.Sprintf("# @enum %s\n", strings.Join(f.Enum, " | "))
+		}
 
 		if v, ok := env[f.Key]; ok && !f.Public {
 			s += fmt.Sprintf("%s=%s\n", f.Key, v.value)

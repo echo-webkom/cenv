@@ -121,6 +121,8 @@ func isAlnum(s string) bool {
 	return true
 }
 
+// Validate the env file in-place; check that all tags actually match the
+// values before comparing with schema.
 func validateEnv(fs map[string]CenvField, longErr longError) error {
 	for _, f := range fs {
 		if err := validateEnvField(f); err != nil {
