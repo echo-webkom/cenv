@@ -34,6 +34,17 @@ You can also use cenv as a single-util package. See [the package source](cenv.go
 go get github.com/echo-webkom/cenv
 ```
 
+```go
+func main() {
+    err := cenv.Load()
+    if err != nil {
+        log.Fatal(err)
+    }
+
+    ...
+}
+```
+
 ## Use
 
 Add one or more of the following `@tags` above a field:
@@ -41,6 +52,8 @@ Add one or more of the following `@tags` above a field:
 - `public`: Marks the field as public. The value will be included in the schema. This is for required static values.
 - `required`: Marks the field as required. The field has to be present, and have a non-empty value.
 - `length [number]`: Requires a specified length for the fields value.
+- `default [value]`: Set a default value. Running `cenv fix` will automatically fill this in if the field is empty.
+- `enum [value1] | [value2] | ...`: Require that the field value is one of the given enum values, separated by `|`.
 - `format [format]`: Requires a specified format for the value. Uses [gokenizer patterns](https://github.com/jesperkha/gokenizer).
 
 ```py
@@ -57,23 +70,27 @@ OTHER_KEY=abcdefgh
 # @length 4
 # @format {number}
 PIN_CODE=1234
+
+# @enum user | guest | admin
+# @default user
+ROLE=user
 ```
 
-Create a schema file from your env:
+Create a schema file from your .env:
 
 ```sh
 # Creates a cenv.schema.json file
 cenv update
 ```
 
-Check you .env after fetching the latest changes
+Check your .env after fetching the latest changes
 
 ```sh
 # Compares your env with the existing cenv.schema.json
 cenv check
 ```
 
-You can fix and outdated .env with the fix command. Note that this will overwrite the existing .env, but use the values that were there before, like secret API keys etc. This may not work correctly if the .env is formatted incorrectly.
+The `fix` command creates a .env file based on the schema, or fills in missing fields in an existing one. Any values already in your .env, like API keys will be kept, while any missing values will be added if a default or public one is provided.
 
 ```sh
 cenv fix
@@ -92,3 +109,4 @@ If you want to overwrite the `Version` variable in `main.go` you have add the fo
 ```sh
 go build -o bin/cenv -ldflags "-X 'github.com/echo-webkom/cenv/cmd.Version=<your-version>'" app/main.go
 ```
+

@@ -13,13 +13,15 @@ type CenvFile struct {
 }
 
 type CenvField struct {
-	Required       bool   `json:"required,omitempty"`       // This field has to be present and have a non-empty value
-	Public         bool   `json:"public,omitempty"`         // This has a publicly known but required value, stored in the schema
-	LengthRequired bool   `json:"lengthRequired,omitempty"` // The length of this field is specified in the schema
-	Length         uint32 `json:"length,omitempty"`         // The required length, if LengthRequired is true
-	Format         string `json:"format,omitempty"`         // Require a specified format for the value
-	Key            string `json:"key,omitempty"`            // Field name
-	Value          string `json:"value,omitempty"`          // Public only
+	Required       bool     `json:"required,omitempty"`       // This field has to be present and have a non-empty value
+	Public         bool     `json:"public,omitempty"`         // This has a publicly known but required value, stored in the schema
+	LengthRequired bool     `json:"lengthRequired,omitempty"` // The length of this field is specified in the schema
+	Length         uint32   `json:"length,omitempty"`         // The required length, if LengthRequired is true
+	Format         string   `json:"format,omitempty"`         // Require a specified format for the value
+	Key            string   `json:"key,omitempty"`            // Field name
+	Value          string   `json:"value,omitempty"`          // Public only
+	Enum           []string `json:"enum,omitempty"`           // List of legal enum values
+	Default        string   `json:"default,omitempty"`        // Default value if none is given
 
 	value string
 }
@@ -62,7 +64,6 @@ func Fix(envPath, schemaPath string) error {
 	}
 
 	env, _ := ReadEnv(envPath)
-
 	file := strings.Builder{}
 
 	for _, f := range schema.Fields {
@@ -80,11 +81,24 @@ func Fix(envPath, schemaPath string) error {
 		if f.Format != "" {
 			s += fmt.Sprintf("# @format %s\n", f.Format)
 		}
+		if len(f.Enum) != 0 {
+			s += fmt.Sprintf("# @enum %s\n", strings.Join(f.Enum, " | "))
+		}
+		if f.Default != "" {
+			s += fmt.Sprintf("# @default %s\n", f.Default)
+		}
 
-		if v, ok := env[f.Key]; ok && !f.Public {
+		// Public > Private > Default
+
+		if f.Public {
+			// The value is public (and static)
+			s += fmt.Sprintf("%s=%s\n", f.Key, f.Value)
+		} else if v, ok := env[f.Key]; ok && v.value != "" {
+			// There is already a value here
 			s += fmt.Sprintf("%s=%s\n", f.Key, v.value)
 		} else {
-			s += fmt.Sprintf("%s=%s\n", f.Key, f.Value)
+			// The value is either empty or set to default (if any)
+			s += fmt.Sprintf("%s=%s\n", f.Key, f.Default)
 		}
 
 		fmt.Printf("cenv: added '%s'\n", f.Key)
