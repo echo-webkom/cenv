@@ -55,6 +55,8 @@ func ReadEnv(filepath string) (env map[string]CenvField, err error) {
 				fld.Public = true
 			case "format": // @format <any>
 				fld.Format = value
+			case "default": // @default <any>
+				fld.Default = value
 
 			case "enum": // @enum <name> | <name> | ...
 				values := strings.Split(value, "|")
