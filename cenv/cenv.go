@@ -13,13 +13,14 @@ type CenvFile struct {
 }
 
 type CenvField struct {
-	Required       bool   `json:"required,omitempty"`       // This field has to be present and have a non-empty value
-	Public         bool   `json:"public,omitempty"`         // This has a publicly known but required value, stored in the schema
-	LengthRequired bool   `json:"lengthRequired,omitempty"` // The length of this field is specified in the schema
-	Length         uint32 `json:"length,omitempty"`         // The required length, if LengthRequired is true
-	Format         string `json:"format,omitempty"`         // Require a specified format for the value
-	Key            string `json:"key,omitempty"`            // Field name
-	Value          string `json:"value,omitempty"`          // Public only
+	Required       bool     `json:"required,omitempty"`       // This field has to be present and have a non-empty value
+	Public         bool     `json:"public,omitempty"`         // This has a publicly known but required value, stored in the schema
+	LengthRequired bool     `json:"lengthRequired,omitempty"` // The length of this field is specified in the schema
+	Length         uint32   `json:"length,omitempty"`         // The required length, if LengthRequired is true
+	Format         string   `json:"format,omitempty"`         // Require a specified format for the value
+	Key            string   `json:"key,omitempty"`            // Field name
+	Value          string   `json:"value,omitempty"`          // Public only
+	Enum           []string `json:"enum,omitempty"`           // List of legal enum values
 
 	value string
 }
