@@ -1,4 +1,4 @@
-package main
+package cmd
 
 import (
 	"fmt"
@@ -39,7 +39,7 @@ func errorExit(err error) {
 	os.Exit(1)
 }
 
-func run() {
+func Run() {
 	checkIfLatestVersion()
 
 	if len(os.Args) < 2 {
