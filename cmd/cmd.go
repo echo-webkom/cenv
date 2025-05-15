@@ -1,11 +1,11 @@
-package cmd
+package main
 
 import (
 	"fmt"
 	"os"
 	"os/exec"
 
-	"github.com/echo-webkom/cenv/cenv"
+	"github.com/echo-webkom/cenv/internal"
 	"github.com/fatih/color"
 )
 
@@ -39,7 +39,7 @@ func errorExit(err error) {
 	os.Exit(1)
 }
 
-func Run() {
+func run() {
 	checkIfLatestVersion()
 
 	if len(os.Args) < 2 {
@@ -101,21 +101,21 @@ func Run() {
 	}
 
 	if command == "fix" {
-		if err := cenv.Fix(envPath, schemaPath); err != nil {
+		if err := internal.Fix(envPath, schemaPath); err != nil {
 			errorExit(err)
 		}
 		return
 	}
 
 	if command == "check" {
-		if err := cenv.Check(envPath, schemaPath); err != nil {
+		if err := internal.Check(envPath, schemaPath); err != nil {
 			errorExit(err)
 		}
 		return
 	}
 
 	if command == "update" {
-		if err := cenv.Update(envPath, schemaPath); err != nil {
+		if err := internal.Update(envPath, schemaPath); err != nil {
 			errorExit(err)
 		}
 		return

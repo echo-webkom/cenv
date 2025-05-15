@@ -1,4 +1,4 @@
-package cenv
+package internal
 
 import (
 	"os"
