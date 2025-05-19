@@ -14,11 +14,12 @@ import (
 var Version string
 
 func checkIfLatestVersion() {
-	if Version == "" {
+	if slices.Contains(os.Args, "--skip-version") {
+		os.Args = slices.Delete(os.Args, slices.Index(os.Args, "--skip-version"), slices.Index(os.Args, "--skip-version")+1)
 		return
 	}
 
-	if slices.Contains(os.Args, "--skip-version") {
+	if Version == "" {
 		return
 	}
 
