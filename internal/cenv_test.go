@@ -1,4 +1,4 @@
-package cenv_test
+package internal_test
 
 import (
 	"os"
@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/echo-webkom/cenv/cenv"
+	"github.com/echo-webkom/cenv/internal"
 )
 
 func TestUpdate(t *testing.T) {
@@ -45,7 +45,7 @@ func TestUpdate(t *testing.T) {
 				t.Fatalf("failed to write cenv.schema.json file: %v", err)
 			}
 
-			err := cenv.Update(envPath, schemaPath)
+			err := internal.Update(envPath, schemaPath)
 			if (err != nil) && !test.expectError {
 				t.Fatalf("Update failed: %v", err)
 			}
@@ -103,7 +103,7 @@ FOO=bar`,
 				t.Fatalf("failed to write cenv.schema.json file: %v", err)
 			}
 
-			err := cenv.Check(envPath, schemaPath)
+			err := internal.Check(envPath, schemaPath)
 			if (err != nil) && !test.expectError {
 				t.Fatalf("Check failed: %v", err)
 			}
@@ -139,7 +139,7 @@ func TestFix(t *testing.T) {
 				t.Fatalf("failed to write cenv.schema.json file: %v", err)
 			}
 
-			if err := cenv.Fix(envPath, schemaPath); err != nil {
+			if err := internal.Fix(envPath, schemaPath); err != nil {
 				t.Fatalf("Fix failed: %v", err)
 			}
 

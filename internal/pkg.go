@@ -1,4 +1,4 @@
-package cenv
+package internal
 
 import (
 	"os"
@@ -6,13 +6,13 @@ import (
 	"github.com/joho/godotenv"
 )
 
-func LoadAndCheck(envPath, schemaPath string) error {
+func LoadAndCheck(envPath, schemaPath string, ignoreEnv bool) error {
 	env, err := ReadSchema(schemaPath)
 	if err != nil {
 		return err
 	}
 
-	if err := godotenv.Load(envPath); err != nil {
+	if err := godotenv.Load(envPath); !ignoreEnv && err != nil {
 		return err
 	}
 

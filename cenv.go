@@ -1,6 +1,6 @@
 package cenv
 
-import "github.com/echo-webkom/cenv/cenv"
+import "github.com/echo-webkom/cenv/internal"
 
 const (
 	defaultEnvPath    = ".env"
@@ -14,9 +14,14 @@ const (
 // The default path for both .env and cenv.schema.json are used, which are
 // both in the project root directory. To specify path use LoadEx()
 func Load() error {
-	return cenv.LoadAndCheck(defaultEnvPath, defaultSchemaPath)
+	return internal.LoadAndCheck(defaultEnvPath, defaultSchemaPath, false)
 }
 
 func LoadEx(envPath string, schemaPath string) error {
-	return cenv.LoadAndCheck(envPath, schemaPath)
+	return internal.LoadAndCheck(envPath, schemaPath, false)
+}
+
+// Verify that the values in the loaded environment mathces the schema.
+func Verify() error {
+	return internal.LoadAndCheck(defaultEnvPath, defaultSchemaPath, true)
 }

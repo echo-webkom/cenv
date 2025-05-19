@@ -5,7 +5,7 @@ import (
 	"os"
 	"os/exec"
 
-	"github.com/echo-webkom/cenv/cenv"
+	"github.com/echo-webkom/cenv/internal"
 	"github.com/fatih/color"
 )
 
@@ -15,8 +15,12 @@ func showHelp() {
 	fmt.Println("Commands:")
 	fmt.Println("    check     Check if .env matches schema")
 	fmt.Println("    update    Generate schema based on .env")
-	fmt.Println("    fix       Automatically fix issues with the .env")
-	fmt.Println("              Tries to reuse previous env values")
+	fmt.Println("    fix       Fix will")
+	fmt.Println("                 create .env if one does not exist")
+	fmt.Println("                 fill in default/public values for empty fields")
+	fmt.Println("                 automatically fix issues with the .env if any")
+	fmt.Println("                 always reuse values already in the .env")
+	fmt.Println("    tags      Show list of available tags and their uses")
 	fmt.Println("    help      Show this help message")
 	fmt.Println("    version   Show version")
 	fmt.Println("    upgrade   Upgrade to latest version")
@@ -27,6 +31,22 @@ func showHelp() {
 	fmt.Println("    --skip-version    Skip version check")
 	fmt.Println("    --version         Show version")
 	fmt.Println()
+}
+
+func showTags() {
+	fmt.Println("List of tags")
+	fmt.Println()
+	fmt.Println("   required        Field has to have a non-empty value")
+	fmt.Println("   public          Field is static and shown in schema")
+	fmt.Println("   default <value> Field will be set to given default value if empty")
+	fmt.Println("   length <n>      Field must have given length")
+	fmt.Println("   format <fmt>    Field must have given format (gokenizer pattern)")
+	fmt.Println("                   See github.com/jesperkha/gokenizer")
+	fmt.Println("   enum <values>   Field must be one of the given values")
+	fmt.Println("                   Values are separated by a |")
+	fmt.Println("                   Example: @enum user | admin | guest")
+	fmt.Println()
+
 }
 
 func errorExitS(message string) {
@@ -78,6 +98,11 @@ func Run() {
 		return
 	}
 
+	if command == "tags" {
+		showTags()
+		return
+	}
+
 	if command == "version" || command == "--version" || command == "-v" {
 		if Version == "" {
 			fmt.Println("you are running a development version")
@@ -101,21 +126,21 @@ func Run() {
 	}
 
 	if command == "fix" {
-		if err := cenv.Fix(envPath, schemaPath); err != nil {
+		if err := internal.Fix(envPath, schemaPath); err != nil {
 			errorExit(err)
 		}
 		return
 	}
 
 	if command == "check" {
-		if err := cenv.Check(envPath, schemaPath); err != nil {
+		if err := internal.Check(envPath, schemaPath); err != nil {
 			errorExit(err)
 		}
 		return
 	}
 
 	if command == "update" {
-		if err := cenv.Update(envPath, schemaPath); err != nil {
+		if err := internal.Update(envPath, schemaPath); err != nil {
 			errorExit(err)
 		}
 		return
