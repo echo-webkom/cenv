@@ -82,7 +82,7 @@ func shouldCheck() bool {
 
 	expiration := time.Hour * 24
 	checked, err := time.Parse(time.RFC3339, string(b))
-	if err != nil || time.Now().Sub(checked) > expiration {
+	if err != nil || time.Since(checked) > expiration {
 		file.Seek(0, io.SeekStart)
 		file.WriteString(time.Now().Format(time.RFC3339))
 		return true
