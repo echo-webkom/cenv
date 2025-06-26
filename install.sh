@@ -92,5 +92,17 @@ for bin in "${bins[@]}"; do
     rm "$archive_path"
 done
 
+if [ "$OS" != "Windows_NT" ]; then
+    man_dir="$HOME/.local/share/man/man1"
+    mkdir -p "$man_dir"
+
+    man_url="https://raw.githubusercontent.com/$REPO/main/cenv.1"
+    curl --fail --location --silent --output "$man_dir/cenv.1" "$man_url"
+
+    if [ $? -ne 0 ]; then
+        echo "Warning: Failed to install man page"
+    fi
+fi
+
 echo "Installation completed successfully!"
 echo "Run 'cenv --help' to get started"

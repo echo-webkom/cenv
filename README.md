@@ -110,3 +110,11 @@ If you want to overwrite the `Version` variable in `main.go` you have add the fo
 go build -o bin/cenv -ldflags "-X 'github.com/echo-webkom/cenv/cmd.Version=<your-version>'" app/main.go
 ```
 
+## Man page
+
+The `cenv` program also comes with a man page. Viewable by `man cenv`. You can install the man page locally with:
+
+```bash
+mkdir -p ~/.local/share/man/man1
+cp cenv.1 ~/.local/share/man/man1
+```
