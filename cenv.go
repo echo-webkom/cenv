@@ -25,3 +25,8 @@ func LoadEx(envPath string, schemaPath string) error {
 func Verify() error {
 	return internal.LoadAndCheck(defaultEnvPath, defaultSchemaPath, true)
 }
+
+// Verify that the values in the loaded environment mathces the schema.
+func VerifyEx(envPath string, schemaPath string) error {
+	return internal.LoadAndCheck(envPath, schemaPath, true)
+}
