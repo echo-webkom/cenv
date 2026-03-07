@@ -1,0 +1,11 @@
+[package]
+name = "cenv"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+clap = { version = "4", features = ["derive"] }
+dotenvy = "0.15"
+regex = "1"
+serde = { version = "1.0.228", features = ["derive"] }
+toml = "0.8"

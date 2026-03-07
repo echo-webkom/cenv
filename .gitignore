@@ -1,4 +1,4 @@
-temp
+/target
 .env
-cenv.schema.json
+cenv.schema.toml
 bin
