@@ -38,6 +38,8 @@ enum Commands {
         #[arg(short, long, default_value = ".env")]
         env: PathBuf,
     },
+    /// Upgrade cenv to the latest version
+    Upgrade,
 }
 
 pub fn run() {
@@ -55,6 +57,12 @@ pub fn run() {
         Commands::Check { schema, env } => {
             if let Err(e) = check_command(&schema, &env) {
                 eprintln!("Error: {}", e);
+                std::process::exit(1);
+            }
+        }
+        Commands::Upgrade => {
+            if let Err(e) = upgrade() {
+                eprintln!("Upgrade failed: {}", e);
                 std::process::exit(1);
             }
         }
@@ -108,4 +116,14 @@ fn check_command(
         }
         std::process::exit(1);
     }
+}
+
+fn upgrade() -> Result<(), Box<dyn std::error::Error>> {
+    // Run the installer script from the repository to upgrade to the latest version
+    std::process::Command::new("/bin/sh")
+        .arg("-c")
+        .arg("curl -fsSL https://raw.githubusercontent.com/echo-webkom/cenv/refs/heads/main/install.sh | bash")
+        .status()?;
+
+    Ok(())
 }
