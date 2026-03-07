@@ -52,6 +52,8 @@ jobs:
 
       - name: 🔨 Build
         run: cargo build --release --target ${{ matrix.target }}
+        env:
+          CENV_VERSION: ${{ github.event.release.tag_name }}
 
       - name: 📦 Package
         run: |
