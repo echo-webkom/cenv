@@ -16,6 +16,14 @@
 
 ## Install
 
+### Using the install script
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/echo-webkom/cenv/refs/heads/main/install.sh | bash
+```
+
+`cenv` will be installed to your `$HOME/.local/bin`. Make sure that the it is added to your `$PATH`.
+
 ### From source
 
 Make sure you have [Rust](https://www.rust-lang.org/tools/install) installed, then run:
