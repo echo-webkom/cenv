@@ -3,39 +3,24 @@
 REPO="echo-webkom/cenv"
 
 if [ "$OS" = "Windows_NT" ]; then
-    target="windows-amd64"
-    extension=".zip"
+    target="x86_64-pc-windows-gnu"
+    exe_suffix=".exe"
 else
     case $(uname -sm) in
-    "Darwin x86_64")
-        target="darwin-amd64"
-        extension=".tar.gz"
+    "Darwin x86_64") target="x86_64-apple-darwin" ;;
+    "Darwin arm64")  target="aarch64-apple-darwin" ;;
+    "Linux x86_64")  target="x86_64-unknown-linux-gnu" ;;
+    *)
+        echo "Error: Unsupported OS or architecture."
+        exit 1
         ;;
-    "Darwin arm64")
-        target="darwin-arm64"
-        extension=".tar.gz"
-        ;;
-    "Linux x86_64")
-        target="linux-amd64"
-        extension=".tar.gz"
-        ;;
-    "Linux aarch64")
-        target="linux-arm64"
-        extension=".tar.gz"
-        ;;
-    *) target="unknown" ;;
     esac
+    exe_suffix=""
 fi
 
-if [ "$target" = "unknown" ]; then
-    echo "Error: Unsupported OS or architecture."
+if ! command -v tar &>/dev/null; then
+    echo "Error: 'tar' is required to extract the binary."
     exit 1
-fi
-
-if [ "$extension" == ".zip" ]; then
-    tool="unzip"
-else
-    tool="tar"
 fi
 
 latest_release=$(curl -s "https://api.github.com/repos/$REPO/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
@@ -48,49 +33,30 @@ fi
 bin_dir="$HOME/.local/bin"
 mkdir -p "$bin_dir"
 
-bins=("cenv")
+archive="cenv-${latest_release}-${target}.tar.gz"
+download_url="https://github.com/$REPO/releases/download/$latest_release/$archive"
+archive_path="$bin_dir/$archive"
+exe="$bin_dir/cenv${exe_suffix}"
 
-for bin in "${bins[@]}"; do
-    binary_name="${bin}-${latest_release}-${target}${extension}"
-    download_url="https://github.com/$REPO/releases/download/$latest_release/$binary_name"
-    archive_path="$bin_dir/${bin}${extension}"
-    exe="$bin_dir/$bin"
+echo "Downloading cenv from $download_url..."
 
-    echo "Downloading $bin from $download_url..."
+curl --fail --location --progress-bar --output "$archive_path" "$download_url"
 
-    curl --fail --location --progress-bar --output "$archive_path" "$download_url"
+if [ $? -ne 0 ]; then
+    echo "Error: Failed to download cenv from $download_url."
+    exit 1
+fi
 
-    if [ $? -ne 0 ]; then
-        echo "Error: Failed to download $bin from $download_url."
-        exit 1
-    fi
+echo "Extracting cenv..."
+tar -xzf "$archive_path" -C "$bin_dir"
+rm "$archive_path"
 
-    if [ "$tool" == "unzip" ]; then
-        if ! command -v unzip &>/dev/null; then
-            echo "Error: 'unzip' command is required to extract the binary."
-            exit 1
-        fi
+if [ ! -f "$exe" ]; then
+    echo "Error: Failed to extract cenv from the archive."
+    exit 1
+fi
 
-        echo "Unzipping $bin..."
-        unzip -o "$archive_path" -d "$bin_dir"
-    else
-        if ! command -v tar &>/dev/null; then
-            echo "Error: 'tar' command is required to extract the binary."
-            exit 1
-        fi
-
-        echo "Extracting $bin..."
-        tar -xzf "$archive_path" -C "$bin_dir"
-    fi
-
-    if [ ! -f "$exe" ]; then
-        echo "Error: Failed to extract $bin from the archive."
-        exit 1
-    fi
-
-    chmod +x "$exe"
-    rm "$archive_path"
-done
+chmod +x "$exe"
 
 echo "Installation completed successfully!"
 echo "Run 'cenv --help' to get started"

@@ -1,0 +1,79 @@
+name: ⚙️ Build
+
+on:
+  release:
+    types:
+      - released
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        include:
+          - os: linux
+            arch: amd64
+            runner: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+          - os: windows
+            arch: amd64
+            runner: ubuntu-latest
+            target: x86_64-pc-windows-gnu
+          - os: darwin
+            arch: amd64
+            runner: macos-latest
+            target: x86_64-apple-darwin
+          - os: darwin
+            arch: arm64
+            runner: macos-latest
+            target: aarch64-apple-darwin
+
+    name: ⚙️ Build (${{ matrix.os }}/${{ matrix.arch }})
+    runs-on: ${{ matrix.runner }}
+
+    steps:
+      - name: 🔍 Checkout
+        uses: actions/checkout@v6
+
+      - name: 📦 Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+
+      - name: 📁 Cache
+        uses: Swatinem/rust-cache@v2
+
+      - name: 🔧 Install cross-compilation tools
+        if: matrix.os == 'windows'
+        run: sudo apt-get update && sudo apt-get install -y gcc-mingw-w64-x86-64
+
+      - name: 🔨 Build
+        run: cargo build --release --target ${{ matrix.target }}
+
+      - name: 📦 Package
+        run: |
+          # Add .exe to the Windows build
+          BINARY="target/${{ matrix.target }}/release/cenv${{ matrix.os == 'windows' && '.exe' || '' }}"
+          ARCHIVE="cenv-${{ github.ref_name }}-${{ matrix.target }}.tar.gz"
+          tar -czf "$ARCHIVE" -C "$(dirname "$BINARY")" "$(basename "$BINARY")"
+          sha256sum "$ARCHIVE" | awk '{print $1}' > "${ARCHIVE}.sha256"
+          echo "ARCHIVE=$ARCHIVE" >> $GITHUB_ENV
+
+      - name: 📤 Upload archive
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: ${{ env.ARCHIVE }}
+          asset_name: ${{ env.ARCHIVE }}
+          tag: ${{ github.ref }}
+
+      - name: 📤 Upload checksum
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: ${{ env.ARCHIVE }}.sha256
+          asset_name: ${{ env.ARCHIVE }}.sha256
+          tag: ${{ github.ref }}
+
