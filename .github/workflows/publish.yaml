@@ -4,6 +4,7 @@ on:
   release:
     types:
       - released
+      - prereleased
 
 permissions:
   contents: write
@@ -76,4 +77,3 @@ jobs:
           file: ${{ env.ARCHIVE }}.sha256
           asset_name: ${{ env.ARCHIVE }}.sha256
           tag: ${{ github.ref }}
-
