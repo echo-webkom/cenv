@@ -1,12 +1,15 @@
+mod version;
+
 use clap::{Parser, Subcommand};
 use std::collections::HashMap;
 use std::fs;
 use std::path::PathBuf;
+use version::VERSION;
 
 use crate::schema::{Schema, generate_env, validate_env};
 
 #[derive(Parser)]
-#[command(name = "cenv")]
+#[command(name = "cenv", version = VERSION.unwrap_or("development"))]
 #[command(about = "Environment file manager using schema definitions", long_about = None)]
 struct Cli {
     #[command(subcommand)]
@@ -38,6 +41,8 @@ enum Commands {
 }
 
 pub fn run() {
+    version::check_latest_version_and_warn();
+
     let cli = Cli::parse();
 
     match cli.command {
