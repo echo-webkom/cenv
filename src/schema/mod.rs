@@ -120,29 +120,29 @@ pub fn validate_env(schema: &Schema, env_vars: &HashMap<String, String>) -> Vec<
         };
 
         // Check required_length
-        if let Some(required_length) = entry.required_length {
-            if value.len() != required_length {
-                errors.push(ValidationError {
-                    key: entry.key.clone(),
-                    message: format!("expected length {}, got {}", required_length, value.len()),
-                    hint: hint.clone(),
-                });
-            }
+        if let Some(required_length) = entry.required_length
+            && value.len() != required_length
+        {
+            errors.push(ValidationError {
+                key: entry.key.clone(),
+                message: format!("expected length {}, got {}", required_length, value.len()),
+                hint: hint.clone(),
+            });
         }
 
         // Check legal_values
-        if let Some(ref legal_values) = entry.legal_values {
-            if !legal_values.contains(&value.to_string()) {
-                errors.push(ValidationError {
-                    key: entry.key.clone(),
-                    message: format!(
-                        "value '{}' is not one of: {}",
-                        value,
-                        legal_values.join(", ")
-                    ),
-                    hint: hint.clone(),
-                });
-            }
+        if let Some(ref legal_values) = entry.legal_values
+            && !legal_values.contains(&value.to_string())
+        {
+            errors.push(ValidationError {
+                key: entry.key.clone(),
+                message: format!(
+                    "value '{}' is not one of: {}",
+                    value,
+                    legal_values.join(", ")
+                ),
+                hint: hint.clone(),
+            });
         }
 
         // Check regex_match
@@ -168,14 +168,14 @@ pub fn validate_env(schema: &Schema, env_vars: &HashMap<String, String>) -> Vec<
         }
 
         // Check kind-specific validation
-        if let Some(ref kind) = entry.kind {
-            if let Some(err) = validate_kind(value, kind) {
-                errors.push(ValidationError {
-                    key: entry.key.clone(),
-                    message: err,
-                    hint: hint.clone(),
-                });
-            }
+        if let Some(ref kind) = entry.kind
+            && let Some(err) = validate_kind(value, kind)
+        {
+            errors.push(ValidationError {
+                key: entry.key.clone(),
+                message: err,
+                hint: hint.clone(),
+            });
         }
     }
 
@@ -187,15 +187,15 @@ fn validate_kind(value: &str, kind: &EntryKind) -> Option<String> {
     match kind {
         EntryKind::Integer { min, max } => match value.parse::<i64>() {
             Ok(n) => {
-                if let Some(min_val) = min {
-                    if n < *min_val {
-                        return Some(format!("value {} is less than minimum {}", n, min_val));
-                    }
+                if let Some(min_val) = min
+                    && n < *min_val
+                {
+                    return Some(format!("value {} is less than minimum {}", n, min_val));
                 }
-                if let Some(max_val) = max {
-                    if n > *max_val {
-                        return Some(format!("value {} is greater than maximum {}", n, max_val));
-                    }
+                if let Some(max_val) = max
+                    && n > *max_val
+                {
+                    return Some(format!("value {} is greater than maximum {}", n, max_val));
                 }
                 None
             }
@@ -203,15 +203,15 @@ fn validate_kind(value: &str, kind: &EntryKind) -> Option<String> {
         },
         EntryKind::Float { min, max } => match value.parse::<f64>() {
             Ok(n) => {
-                if let Some(min_val) = min {
-                    if n < *min_val {
-                        return Some(format!("value {} is less than minimum {}", n, min_val));
-                    }
+                if let Some(min_val) = min
+                    && n < *min_val
+                {
+                    return Some(format!("value {} is less than minimum {}", n, min_val));
                 }
-                if let Some(max_val) = max {
-                    if n > *max_val {
-                        return Some(format!("value {} is greater than maximum {}", n, max_val));
-                    }
+                if let Some(max_val) = max
+                    && n > *max_val
+                {
+                    return Some(format!("value {} is greater than maximum {}", n, max_val));
                 }
                 None
             }
