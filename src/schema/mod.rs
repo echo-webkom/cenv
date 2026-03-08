@@ -29,7 +29,8 @@ pub struct Entry {
     pub kind: Option<EntryKind>,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, PartialEq)]
+#[serde(try_from = "RawEntryKind")]
 pub enum EntryKind {
     Integer { min: Option<i64>, max: Option<i64> },
     Float { min: Option<f64>, max: Option<f64> },
@@ -39,6 +40,62 @@ pub enum EntryKind {
     Bool,
     IpAddress,
     Path,
+}
+
+// Represents the different ways an `EntryKind` can be specified in the input schema.
+//
+// - A `StructuredKind` is a "kind" that allows for additional parameters.
+// - A `Name` is a simple string that maps to a known `EntryKind` variant without parameters.
+#[derive(Deserialize)]
+#[serde(untagged)]
+enum RawEntryKind {
+    Structured(StructuredKind),
+    Name(String),
+}
+
+#[derive(Deserialize)]
+enum StructuredKind {
+    Integer { min: Option<i64>, max: Option<i64> },
+    Float { min: Option<f64>, max: Option<f64> },
+}
+
+impl TryFrom<RawEntryKind> for EntryKind {
+    type Error = String;
+
+    fn try_from(raw: RawEntryKind) -> Result<Self, Self::Error> {
+        match raw {
+            RawEntryKind::Structured(s) => Ok(match s {
+                StructuredKind::Integer { min, max } => EntryKind::Integer { min, max },
+                StructuredKind::Float { min, max } => EntryKind::Float { min, max },
+            }),
+            RawEntryKind::Name(s) => {
+                // Normalize the input string to allow for case-insensitive and
+                // underscore-insensitive naming. This is to avoid annoying users with super
+                // strict naming.
+                let normalized_name = s.to_lowercase().replace('_', "");
+                match normalized_name.as_str() {
+                    "integer" => Ok(EntryKind::Integer {
+                        min: None,
+                        max: None,
+                    }),
+                    "float" => Ok(EntryKind::Float {
+                        min: None,
+                        max: None,
+                    }),
+                    "string" => Ok(EntryKind::String),
+                    "url" => Ok(EntryKind::Url),
+                    "email" => Ok(EntryKind::Email),
+                    "bool" => Ok(EntryKind::Bool),
+                    "ipaddress" => Ok(EntryKind::IpAddress),
+                    "path" => Ok(EntryKind::Path),
+                    other => Err(format!(
+                        "unknown variant '{}', expected one of: integer, float, string, url, email, bool, ipaddress, path",
+                        other
+                    )),
+                }
+            }
+        }
+    }
 }
 
 /// Generates .env file content based on the given schema and existing env values.

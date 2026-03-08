@@ -1435,3 +1435,43 @@ mod validate_env_tests {
         }
     }
 }
+
+mod kind_deserialization_tests {
+    use crate::schema::{Entry, EntryKind};
+
+    #[test]
+    fn test_kind_deserialization() {
+        let cases = vec![
+            (
+                "Integer",
+                EntryKind::Integer {
+                    min: None,
+                    max: None,
+                },
+            ),
+            (
+                "integer",
+                EntryKind::Integer {
+                    min: None,
+                    max: None,
+                },
+            ),
+            ("ip_address", EntryKind::IpAddress),
+            ("IP_ADDRESS", EntryKind::IpAddress),
+            ("ipaddress", EntryKind::IpAddress),
+        ];
+
+        for (kind, ttype) in cases {
+            let toml_str = format!(
+                r#"
+                key = "TEST_VAR"
+                required = true
+                kind = "{}"
+            "#,
+                kind
+            );
+            let entry: Entry = toml::from_str(&toml_str).expect("Failed to parse TOML");
+            assert_eq!(entry.kind, Some(ttype));
+        }
+    }
+}
