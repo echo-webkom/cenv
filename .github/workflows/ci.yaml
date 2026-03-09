@@ -41,5 +41,5 @@ jobs:
                   go-version: "1.25"
 
             - name: 🧪 Go Test
-              run: go test ./...
+              run: cd clients/cenv-go && go test ./...
 
