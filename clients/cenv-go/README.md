@@ -5,7 +5,7 @@ Go package for `cenv` runtime validation.
 ## Install
 
 ```sh
-go get github.com/echo-webkom/cenv
+go get github.com/echo-webkom/cenv/clients/cenv-go
 ```
 
 ## Use
@@ -13,7 +13,7 @@ go get github.com/echo-webkom/cenv
 ```go
 package main
 
-import "github.com/echo-webkom/cenv"
+import cenv "github.com/echo-webkom/cenv/clients/cenv-go"
 
 func main() {
     config := cenv.Config{
