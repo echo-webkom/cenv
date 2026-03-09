@@ -1,4 +1,4 @@
-module github.com/echo-webkom/cenv
+module github.com/echo-webkom/cenv/clients/cenv-go
 
 go 1.24.2
 
