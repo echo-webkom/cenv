@@ -31,7 +31,7 @@ fn default_options() -> Entry {
     default_entry()
 }
 
-// ==================== generate_env Tests ====================
+// ==================== generate_env_vars Tests ====================
 
 mod generate_env_tests {
     use super::*;
@@ -40,7 +40,7 @@ mod generate_env_tests {
     fn empty_schema_produces_empty_output() {
         let schema = create_schema(vec![]);
         let existing = HashMap::new();
-        let output = generate_env(&schema, &existing);
+        let output = generate_env_vars(&schema, &existing);
         assert_eq!(output, "");
     }
 
@@ -48,7 +48,7 @@ mod generate_env_tests {
     fn single_entry_no_existing_no_default() {
         let schema = create_schema(vec![create_entry("FOO", default_options())]);
         let existing = HashMap::new();
-        let output = generate_env(&schema, &existing);
+        let output = generate_env_vars(&schema, &existing);
         assert_eq!(output, "FOO=\n");
     }
 
@@ -58,7 +58,7 @@ mod generate_env_tests {
         opts.default = Some("bar".to_string());
         let schema = create_schema(vec![create_entry("FOO", opts)]);
         let existing = HashMap::new();
-        let output = generate_env(&schema, &existing);
+        let output = generate_env_vars(&schema, &existing);
         assert_eq!(output, "FOO=bar\n");
     }
 
@@ -69,7 +69,7 @@ mod generate_env_tests {
         let schema = create_schema(vec![create_entry("FOO", opts)]);
         let mut existing = HashMap::new();
         existing.insert("FOO".to_string(), "existing_value".to_string());
-        let output = generate_env(&schema, &existing);
+        let output = generate_env_vars(&schema, &existing);
         assert_eq!(output, "FOO=existing_value\n");
     }
 
@@ -80,7 +80,7 @@ mod generate_env_tests {
         let schema = create_schema(vec![create_entry("FOO", opts)]);
         let mut existing = HashMap::new();
         existing.insert("FOO".to_string(), "".to_string());
-        let output = generate_env(&schema, &existing);
+        let output = generate_env_vars(&schema, &existing);
         assert_eq!(output, "FOO=default_value\n");
     }
 
@@ -89,7 +89,7 @@ mod generate_env_tests {
         let schema = create_schema(vec![create_entry("FOO", default_options())]);
         let mut existing = HashMap::new();
         existing.insert("FOO".to_string(), "".to_string());
-        let output = generate_env(&schema, &existing);
+        let output = generate_env_vars(&schema, &existing);
         assert_eq!(output, "FOO=\n");
     }
 
@@ -101,7 +101,7 @@ mod generate_env_tests {
             create_entry("CCC", default_options()),
         ]);
         let existing = HashMap::new();
-        let output = generate_env(&schema, &existing);
+        let output = generate_env_vars(&schema, &existing);
         assert_eq!(output, "AAA=\nBBB=\nCCC=\n");
     }
 
@@ -118,7 +118,7 @@ mod generate_env_tests {
         let mut existing = HashMap::new();
         existing.insert("AAA".to_string(), "value_a".to_string());
         existing.insert("CCC".to_string(), "value_c".to_string());
-        let output = generate_env(&schema, &existing);
+        let output = generate_env_vars(&schema, &existing);
         assert_eq!(output, "AAA=value_a\nBBB=default_b\nCCC=value_c\n");
     }
 
@@ -129,7 +129,7 @@ mod generate_env_tests {
         existing.insert("FOO".to_string(), "foo_value".to_string());
         existing.insert("BAR".to_string(), "bar_value".to_string());
         existing.insert("BAZ".to_string(), "baz_value".to_string());
-        let output = generate_env(&schema, &existing);
+        let output = generate_env_vars(&schema, &existing);
         assert_eq!(output, "FOO=foo_value\n");
     }
 
@@ -141,7 +141,7 @@ mod generate_env_tests {
             "FOO".to_string(),
             "value with spaces & special=chars!".to_string(),
         );
-        let output = generate_env(&schema, &existing);
+        let output = generate_env_vars(&schema, &existing);
         assert_eq!(output, "FOO=value with spaces & special=chars!\n");
     }
 }
